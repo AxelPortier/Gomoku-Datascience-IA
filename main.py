@@ -1,12 +1,6 @@
 import numpy as np
 
-<<<<<<< Updated upstream
 class Game :
-=======
-dico={lettre:digit for lettre,digit in zip("ABCDEFGHIJKLMNO",[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])}
-
-class Game:
->>>>>>> Stashed changes
     def __init__(self):
         self.plateau = Plateau()
         self.Init()
@@ -46,32 +40,24 @@ class Plateau:
         else:
             self.plateau = plateau
 
-<<<<<<< Updated upstream
     def get_plateau(self):
         return self.plateau
     
     def set_plateau(self,pos,val):
         self.plateau[pos[0],pos[1]] = val
     
-    def __str__(self):
-=======
+
     def __str__(self):  #Affiche dans la console le plateau
         cellule= {0: " ", 1: "X", 2: "O"}
->>>>>>> Stashed changes
         rep = ""
         for ligne in self.plateau:
             rep += "+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\n"
             for cell in ligne:
                 rep += f"| {cellule[cell]} "
             rep += "|\n"
+        rep += "+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\n"
         return rep
       
-
-
-
-    str_to_print += "+---+---+---+"
-    print(str_to_print)
-
 def main():
     game = Game()
 
