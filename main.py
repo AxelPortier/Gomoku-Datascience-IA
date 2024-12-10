@@ -80,18 +80,18 @@ def Condwin(plato):
     elif windiag== False:
         return windiag
 
-def winligne(plato):
-    val = 0
-    compt = 0
-    for elem in plato:
+def winligne(plato): 
+    val = 0 # valeur actuel 
+    compt = 0 # compteur de val à la suite
+    for elem in plato: 
         for x in elem:
-            if x!=val:
+            if x!=val: # si l'element est differnet du precedent, on echange
                 val==x
-                compt=0
+                compt=0 # et on reset le compteur
             if val==x:
-                compt+=1
+                compt+=1 #+1 si c'est les memes
             if compt ==5:
-                return val
+                return val # si compteur 5, c'est win
 
 
 def wincolo(plato):
