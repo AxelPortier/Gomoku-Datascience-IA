@@ -1,5 +1,16 @@
 import numpy as np
 
+class Game :
+    def __init__(self):
+        self.plateau = Plateau()
+        self.player1 = input("Nom Joueur 1 \n")
+        self.player2 = input("Nom Joueur 2 \n")
+    
+       
+    def get_plateau(self):
+        return self.plateau
+        
+        
 
 class Plateau:
     def __init__(self, plato=None):
@@ -14,6 +25,11 @@ class Plateau:
             rep += str(ligne) + "\n"
         return rep
 
-plat=Plateau()
-print(plat)
+def main():
+    game = Game()
+    
+
+
+if __name__ == "__main__":
+    main()
 
