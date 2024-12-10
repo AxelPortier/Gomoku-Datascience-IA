@@ -53,10 +53,25 @@ class Game :
             return self.windiag
 
     def winligne(self):
+        val = 0 # valeur actuel 
+        compt = 0 # compteur de val à la suite
+        for elem in self.plateau.get_plateau(): 
+            for x in elem:
+                if x!=val: # si l'element est differnet du precedent, on echange
+                    val==x
+                    compt=0 # et on reset le compteur
+                if val==x:
+                    compt+=1 #+1 si c'est les memes
+                if compt ==5:
+                    return val # si compteur 5, c'est win
+
+
+    def wincolo(self):
         val = 0
         compt = 0
-        for elem in self.plateau.get_plateau():
-            for x in elem:
+        for i in range(15):
+            for j in range(15):
+                x = self.plateau.get_plateau()[i][j]
                 if x!=val:
                     val==x
                     compt=0
@@ -64,10 +79,6 @@ class Game :
                     compt+=1
                 if compt ==5:
                     return val
-
-
-    def wincolo(self):
-        return 0
 
     def windiag(self):
         return 0
