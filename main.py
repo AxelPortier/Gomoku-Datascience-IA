@@ -1,8 +1,12 @@
 import numpy as np
 
+dico={lettre:digit for lettre,digit in zip("ABCDEFGHIJKLMNO",[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])}
+print(dico)
+
 class Game :
     def __init__(self):
         self.plateau = Plateau()
+<<<<<<< Updated upstream
      
     def get_plateau(self):
         return self.plateau.plateau
@@ -12,6 +16,16 @@ class Game :
     
         
         
+=======
+        self.player1 = input("Nom Joueur 1 \n")
+        self.player2 = input("Nom Joueur 2 \n")
+
+
+    def get_plateau(self):
+        return self.plateau
+
+
+>>>>>>> Stashed changes
 
 class Plateau:
     def __init__(self, plateau=None):
@@ -28,11 +42,15 @@ class Plateau:
 
 def main():
     game = Game()
+<<<<<<< Updated upstream
     print(game.get_plateau()[0,0])
     game.set_plateau([0,0],1)
     print(game.get_plateau()[0,0])
 
     
+=======
+
+>>>>>>> Stashed changes
 def Result(plato,joueur,position):
     if plato[position]!=0:
         raise Exception("Position déjà occupée!")
@@ -40,6 +58,11 @@ def Result(plato,joueur,position):
         new_plato = plato.copy()
         new_plato[position[0],position[1]] = joueur
         return new_plato
+
+def Action(plato):
+    return [(i,j) for i in range(15) for j in range(15) if plato[i,j]==0]
+
+
 
 
 if __name__ == "__main__":
