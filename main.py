@@ -5,7 +5,7 @@ class Game :
         self.plateau = Plateau()
         self.init()
     
-    def init(self):
+    def Init(self):
         print("Bienvenue, vous voilà dans la variante du Gomoku.")
         print("Veuillez choisir quel mode de jeu vous voulez jouer parmi :\n    -Joueur VS Joueur (JJ)\n    -Joueur VS Ordinateur (JO)")
         mode = input("Entrez jj ou jo : \n")
@@ -19,8 +19,11 @@ class Game :
         else :
             raise Exception("Mode de jeu non existant")
     
-    def turn(self):
+    def Turn(self):
         pass
+    
+    def Action(self):  # retourne liste [(x,y)...] de position possible
+        return [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
     
     def Result(self,joueur,pos):  # renvoie le nouveau plato modifié
         if (self.plateau.get_plateau()[pos[0],pos[1]]!=0):
@@ -52,20 +55,6 @@ class Plateau:
 
 def main():
     game = Game()
-
-
-def Result(plato,joueur,position):  # renvoie le nouveau plato modifié
-    if plato[position]!=0:
-        raise Exception("Position déjà occupée!")
-    else:
-        new_plato = plato.copy()
-        new_plato[position[0],position[1]] = joueur
-        return new_plato
-
-def Action(plato):  # retourne liste [(x,y)...] de position possible
-    return [(i,j) for i in range(15) for j in range(15) if plato[i,j]==0]
-
-
 
 
 if __name__ == "__main__":
