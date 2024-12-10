@@ -51,7 +51,7 @@ plat=Plateau()
 pos1=Pos(1,1)
 print(pos1)
 
-print("jerrican de caca")
+print("boubouboubou")
 print("En s'en fout")
 
 
