@@ -51,6 +51,4 @@ plat=Plateau()
 pos1=Pos(1,1)
 print(pos1)
 
-print("test")
-print("En s'en fout")
-print("ccc")
+print("No No no")
