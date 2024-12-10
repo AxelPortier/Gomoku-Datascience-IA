@@ -62,6 +62,55 @@ def main():
     game = Game()
 
 
+<<<<<<< Updated upstream
+=======
+def Result(plato,joueur,position):  # renvoie le nouveau plato modifié
+    if plato[position]!=0:
+        raise Exception("Position déjà occupée!")
+    else:
+        new_plato = plato.copy()
+        new_plato[position[0],position[1]] = joueur
+        return new_plato
+
+def Action(plato):  # retourne liste [(x,y)...] de position possible
+    return [(i,j) for i in range(15) for j in range(15) if plato[i,j]==0]
+
+def Condwin(plato):
+    if winligne== False:
+        return winligne
+    elif wincolo== False:
+        return wincolo
+    elif windiag== False:
+        return windiag
+
+def winligne(plato):
+    val = 0
+    compt = 0
+    for elem in plato:
+        for x in elem:
+            if x!=val:
+                val==x
+                compt=0
+            if val==x:
+                compt+=1
+            if compt ==5:
+                return val
+
+
+def wincolo(plato):
+    return 0
+
+def windiag(plato):
+    return 0
+
+            
+        
+
+
+
+
+
+>>>>>>> Stashed changes
 if __name__ == "__main__":
     main()
 
