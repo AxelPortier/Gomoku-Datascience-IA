@@ -1,8 +1,5 @@
 import numpy as np
 
-dico={lettre:digit for lettre,digit in zip("ABCDEFGHIJKLMNO",[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])}
-print(dico)
-
 class Game :
     def __init__(self):
         self.plateau = Plateau()
@@ -30,10 +27,19 @@ class Game :
     
     def turn(self):
         pass
+    
+    def Result(self,joueur,pos):  # renvoie le nouveau plato modifié
+        if (self.get_plateau()[pos[0],pos[1]]!=0):
+            raise Exception("Position déjà occupée!")
+        else:
+            new_plato = self.get_plateau().copy()
+            new_plato[pos[0],pos[1]] = joueur
+            return new_plato
 
 
 class Plateau:
     def __init__(self, plateau=None):
+        self.dico_ligne = {digit:lettre for lettre,digit in zip("ABCDEFGHIJKLMNO",[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])}
         if plateau == None:
             self.plateau = np.zeros((15, 15), dtype=int)
         else:
