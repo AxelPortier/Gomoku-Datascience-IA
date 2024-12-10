@@ -95,7 +95,20 @@ def winligne(plato):
 
 
 def wincolo(plato):
-    return 0
+    val = 0
+    compt = 0
+    for i in range(15):
+        for j in range(15):
+            x = plato[i][j]
+            if x!=val:
+                val==x
+                compt=0
+            if val==x:
+                compt+=1
+            if compt ==5:
+                return val
+
+
 
 def windiag(plato):
     return 0
