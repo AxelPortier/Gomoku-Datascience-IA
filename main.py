@@ -1,5 +1,8 @@
 import numpy as np
 
+dico={lettre:digit for lettre,digit in zip("ABCDEFGHIJKLMNO",[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])}
+print(dico)
+
 class Game :
     def __init__(self):
         self.plateau = Plateau()
@@ -28,6 +31,7 @@ class Game :
     def turn(self):
         pass
 
+
 class Plateau:
     def __init__(self, plateau=None):
         if plateau == None:
@@ -45,14 +49,18 @@ def main():
     game = Game()
 
 
-    
-def Result(plato,joueur,position):
+def Result(plato,joueur,position):  # renvoie le nouveau plato modifié
     if plato[position]!=0:
         raise Exception("Position déjà occupée!")
     else:
         new_plato = plato.copy()
         new_plato[position[0],position[1]] = joueur
         return new_plato
+
+def Action(plato):  # retourne liste [(x,y)...] de position possible
+    return [(i,j) for i in range(15) for j in range(15) if plato[i,j]==0]
+
+
 
 
 if __name__ == "__main__":
