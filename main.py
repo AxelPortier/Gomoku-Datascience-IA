@@ -1,6 +1,10 @@
 import numpy as np
 
+<<<<<<< Updated upstream
 class Game :
+=======
+class Game:
+>>>>>>> Stashed changes
     def __init__(self):
         self.plateau = Plateau()
         self.Init()
@@ -26,7 +30,7 @@ class Game :
         return [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
     
     def Result(self,joueur,pos):  # renvoie le nouveau plato modifié
-        if (self.plateau.get_plateau()[pos[0],pos[1]]!=0):
+        if self.plateau.get_plateau()[pos[0],pos[1]] != 0:
             raise Exception("Position déjà occupée!")
         else:
             self.plateau.set_plateau(pos,joueur)
@@ -46,18 +50,26 @@ class Plateau:
     def set_plateau(self,pos,val):
         self.plateau[pos[0],pos[1]] = val
     
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     def __str__(self):  #Affiche dans la console le plateau
         cellule= {0: " ", 1: "X", 2: "O"}
         rep = ""
         for ligne in self.plateau:
             rep += "+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\n"
             for cell in ligne:
-                rep += f"| {cellule[cell]} "
+                rep+=f"| {cellule[cell]} "
             rep += "|\n"
         rep += "+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\n"
         return rep
+<<<<<<< Updated upstream
       
+=======
+
+
+>>>>>>> Stashed changes
 def main():
     game = Game()
 
