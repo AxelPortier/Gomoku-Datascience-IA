@@ -30,9 +30,15 @@ class Game :
             raise Exception("Mode de jeu non existant")
     
     def main_Game(self,prio=0):
-        pass
+        alternance_Joueur = 1
+        while True :
+            if (self.Condwin() !=False):
+                break
+        #self.GameOver(self.Condwin())
+            
+            
     
-    def Turn(self):
+    def Turn(self,joueur):
         pass
     
     def Action(self):  # retourne liste [(x,y)...] de position possible
