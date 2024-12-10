@@ -3,15 +3,30 @@ import numpy as np
 class Game :
     def __init__(self):
         self.plateau = Plateau()
-     
+        self.init()
+    
     def get_plateau(self):
         return self.plateau.plateau
     
     def set_plateau(self,pos,val):
         self.plateau.plateau[pos[0],pos[1]] = val
     
-        
-        
+    def init(self):
+        print("Bienvenue, vous voilà dans la variante du Gomoku.")
+        print("Veuillez choisir quel mode de jeu vous voulez jouer parmi :\n    -Joueur VS Joueur (JJ)\n    -Joueur VS Ordinateur (JO)")
+        mode = input("Entrez jj ou jo : \n")
+        if (mode.upper() == "JJ"):
+            print("\n\nVous avez sélectioner le mode : Joueur VS Joueur")
+            print("Veuiller selectioner le Joueur 1")
+        elif (mode.upper() == "JO"):
+            print("\n\nVous avez sélectioner le mode : Joueur VS Ordinateur")
+            print("Veuiller selectioner la priorite de Jeu parmis :\n    -Je commence\n    -Je seconde")
+            prio = input()
+        else :
+            raise Exception("Mode de jeu non existant")
+    
+    def turn(self):
+        pass
 
 class Plateau:
     def __init__(self, plateau=None):
@@ -28,9 +43,7 @@ class Plateau:
 
 def main():
     game = Game()
-    print(game.get_plateau()[0,0])
-    game.set_plateau([0,0],1)
-    print(game.get_plateau()[0,0])
+
 
     
 def Result(plato,joueur,position):
