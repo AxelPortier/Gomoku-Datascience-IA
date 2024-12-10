@@ -3,30 +3,35 @@ import numpy as np
 class Game :
     def __init__(self):
         self.plateau = Plateau()
-        self.player1 = input("Nom Joueur 1 \n")
-        self.player2 = input("Nom Joueur 2 \n")
-    
-       
+     
     def get_plateau(self):
-        return self.plateau
+        return self.plateau.plateau
+    
+    def set_plateau(self,pos,val):
+        self.plateau.plateau[pos[0],pos[1]] = val
+    
         
         
 
 class Plateau:
-    def __init__(self, plato=None):
-        if plato == None:
-            self.plato = np.zeros((15, 15), dtype=int)
+    def __init__(self, plateau=None):
+        if plateau == None:
+            self.plateau = np.zeros((15, 15), dtype=int)
         else:
-            self.plato = plato
+            self.plateau = plateau
 
     def __str__(self):
         rep = ""
-        for ligne in self.plato:
+        for ligne in self.plateau:
             rep += str(ligne) + "\n"
         return rep
 
 def main():
     game = Game()
+    print(game.get_plateau()[0,0])
+    game.set_plateau([0,0],1)
+    print(game.get_plateau()[0,0])
+
     
 
 
