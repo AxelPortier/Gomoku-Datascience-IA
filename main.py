@@ -3,7 +3,7 @@ import numpy as np
 class Game :
     def __init__(self):
         self.plateau = Plateau()
-        self.init()
+        self.Init()
     
     def Init(self):
         print("Bienvenue, vous voilà dans la variante du Gomoku.")
