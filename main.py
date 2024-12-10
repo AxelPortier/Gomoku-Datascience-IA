@@ -28,6 +28,13 @@ class Plateau:
 def main():
     game = Game()
     
+def Result(plato,joueur,position):
+    if plato[position]!=0:
+        raise Exception("Position déjà occupée!")
+    else:
+        new_plato = plato.copy()
+        new_plato[position[0],position[1]] = joueur
+        return new_plato
 
 
 if __name__ == "__main__":
