@@ -1,10 +1,6 @@
 import numpy as np
 
-<<<<<<< Updated upstream
 class Game :
-=======
-class Game:
->>>>>>> Stashed changes
     def __init__(self):
         self.plateau = Plateau()
         self.Init()
@@ -50,10 +46,6 @@ class Plateau:
     def set_plateau(self,pos,val):
         self.plateau[pos[0],pos[1]] = val
     
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     def __str__(self):  #Affiche dans la console le plateau
         cellule= {0: " ", 1: "X", 2: "O"}
         rep = ""
@@ -64,18 +56,11 @@ class Plateau:
             rep += "|\n"
         rep += "+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\n"
         return rep
-<<<<<<< Updated upstream
       
-=======
-
-
->>>>>>> Stashed changes
 def main():
     game = Game()
 
 
-<<<<<<< Updated upstream
-=======
 def Result(plato,joueur,position):  # renvoie le nouveau plato modifié
     if plato[position]!=0:
         raise Exception("Position déjà occupée!")
@@ -122,7 +107,6 @@ def windiag(plato):
 
 
 
->>>>>>> Stashed changes
 if __name__ == "__main__":
     main()
 
