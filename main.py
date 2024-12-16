@@ -76,9 +76,6 @@ def Result(plato,joueur,position):  # renvoie le nouveau plato modifié
 def Action(plato):  # retourne liste [(x,y)...] de position possible
     return [(i,j) for i in range(15) for j in range(15) if plato[i,j]==0]
 
-import timeit
-import numpy as np
-from scipy.signal import convolve2d
 
 m = 5  # Longueur de la victoire
 n = 15
