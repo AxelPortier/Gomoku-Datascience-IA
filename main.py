@@ -18,12 +18,12 @@ class Game :
         elif (mode.upper() == "JO"):
             print("\n\nVous avez sélectioner le mode : Joueur VS Ordinateur")
             print("Veuiller selectioner la priorite de Jeu parmis :\n    -Je commence\n    -Je seconde")
-            prio = input()
+            prio = input("Entrez j1 ou j2 : \n")
         else :
             raise Exception("Mode de jeu non existant")
     
     def Turn(self):
-        pass
+        return 
     
     def Action(self):  # retourne liste [(x,y)...] de position possible
         return [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
@@ -33,6 +33,37 @@ class Game :
             raise Exception("Position déjà occupée!")
         else:
             self.plateau.set_plateau(pos,joueur)
+
+    def play(self):  
+        print(self.plateau)
+        is_playing=1
+        while check_winner(self.plateau)==0:
+            if is_playing==1:
+                while True:
+                    try:
+                        l,c=int(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P) : ")),int(input("rentrer la colonne (0 1 2 3 4 5 6 7 8 9 10 11 12 13 14) : "))
+                        if (l,c) in self.Action(self.plateau):
+                            board = Result(self.plateau, is_playing, (l, c))
+                            break                    
+                    except Exception as e:
+                        print(f"\nErreur : {e}. \nVeuillez réessayer.\n")
+                print(self.plateau)
+                print(f"Vous avez joué : {(l,c)}\n")
+                if check_winner(board)!=0:
+                    break
+                is_playing=2
+            else:
+                position_ordi=MiniMax(self.plateau,is_playing)
+                board=Result(self.plateau,is_playing,position_ordi)
+                print(f"Joueur 2 (Ordinateur) joue : {position_ordi}")
+                is_playing=1
+                print(self.plateau)
+        winner = check_winner(self.plateau)
+        if winner == 0:
+            print("Match nul !")
+        else:
+            print(f"Le joueur {winner} a gagné !")
+        return 
 
 
 class Plateau:
@@ -48,22 +79,40 @@ class Plateau:
         return self.plateau
     
     def set_plateau(self,pos,val):
-        self.plateau[pos[0],pos[1]] = val
-    
-    def __str__(self):  #Affiche dans la console le plateau
-        cellule= {0: " ", 1: "X", 2: "O"}
-        rep = ""
+        self.plateau[pos[0],pos[1]] = val  
+
+
+    def __str__(self):  # Affiche dans la console le plateau
+        cellule = {0: " ", 1: "X", 2: "O"}
+        rep = "    "  # Espacement initial pour aligner les chiffres avec les colonnes
+        
+        # Ajout des indices des colonnes, alignés avec les cases
+        for i in range(len(self.plateau[0])):
+            rep += f" {i:<3}"  # Chaque indice occupe 3 caractères pour s'aligner
+        
+        rep += "\n"  # Retour à la ligne pour le début du plateau
+        # Construction du tableau
+        i = 0
         for ligne in self.plateau:
-            rep += "+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\n"
+            # Ligne de séparation entre les cases
+            rep += "    +" + "---+" * len(ligne) + "\n"
+            # Contenu de la ligne
+            rep += f"{self.dico_ligne[i]}   "  # Ajout de l'indice de la ligne
             for cell in ligne:
-                rep+=f"| {cellule[cell]} "
+                rep += f"| {cellule[cell]} "  # Ajout du contenu de chaque case
             rep += "|\n"
-        rep += "+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\n"
-        return rep
-      
+            i += 1
+    
+        # Dernière ligne de séparation
+        rep += "    +" + "---+" * len(self.plateau[0]) + "\n"
+        return rep 
+    
+         
 def main():
     game = Game()
 
+def MiniMax():
+    pass
 
 def Result(plato,joueur,position):  # renvoie le nouveau plato modifié
     if plato[position]!=0:
@@ -94,14 +143,14 @@ def check_winner(grid):
     
     def check_line(start_x, start_y, dx, dy):
         """Vérifie si une ligne de longueur m existe à partir d'une position donnée (start_x, start_y) dans une direction donnée (dx, dy)."""
-        player = grid[start_x][start_y]
+        player = grid[start_x,start_y]
         if player == 0:
             return False  # Aucun joueur ici
         
         count = 0
         x, y = start_x, start_y
         
-        while 0 <= x < n and 0 <= y < n and grid[x][y] == player:
+        while 0 <= x < n and 0 <= y < n and grid[x,y] == player:
             count += 1
             if count == m:
                 return player
@@ -113,13 +162,13 @@ def check_winner(grid):
     # Parcours de chaque case de la grille
     for i in range(n):
         for j in range(n):
-            if grid[i][j] != 0:  # Vérifie uniquement les cases non vides
+            if grid[i,j] != 0:  # Vérifie uniquement les cases non vides
                 # Vérifie dans les directions : droite, bas, diagonale descendante, diagonale montante
                 if (check_line(i, j, 0, 1) or  # Horizontal (droite)
                     check_line(i, j, 1, 0) or  # Vertical (bas)
                     check_line(i, j, 1, 1) or  # Diagonale descendante
                     check_line(i, j, -1, 1)):  # Diagonale montante
-                    return grid[i][j]  # Retourne le joueur gagnant (1 ou 2)
+                    return grid[i,j]  # Retourne le joueur gagnant (1 ou 2)
     
     return 0  # Aucun gagnant
 
