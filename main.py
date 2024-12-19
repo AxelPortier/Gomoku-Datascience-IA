@@ -128,6 +128,7 @@ def Action(plato):  # retourne liste [(x,y)...] de position possible
 
 m = 5  # Longueur de la victoire
 n = 15
+
 repeats = 500
 grids = 100
 
@@ -225,15 +226,15 @@ def test_round():
         timeit.timeit(lambda:check_winner_complex(gridc), number=repeats)
     ]
 
-"""s
+
 result = np.zeros(3)
 for _ in range(grids):
     result += test_round()
- Programme de test
+ #Programme de test
 print(f"Standard {result[0]:.6f}s")
 print(f"Matrix {result[1]:.6f}s")
 print(f"Complexe {result[2]:.6f}s")
-"""
+
 
 
             
