@@ -94,7 +94,6 @@ class Game :
     def GameOver(self,joueur):
         pass
     
-    #check_winner
     def check_winner(self):
         # Convolutions pour détecter les alignements
         for mask in self.masks:
