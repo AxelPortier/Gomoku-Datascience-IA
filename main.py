@@ -19,24 +19,6 @@ class Game :
                 break
             else:
                 print("Mode de jeu non existant. Veuillez réessayer.\n")
-    # def __init__(self):
-    #     self.plateau = Plateau()
-    #     self.Init()
-    #     self.is_playing=1
-    
-    # def Init(self):
-    #     print("Bienvenue, vous voilà dans la variante du Gomoku.")
-    #     print("Veuillez choisir quel mode de jeu vous voulez jouer parmi :\n    -Joueur VS Joueur (JJ)\n    -Joueur VS Ordinateur (JO)")
-    #     mode = input("Entrez jj ou jo : \n")
-    #     if (mode.upper() == "JJ"):
-    #         print("\n\nVous avez sélectioner le mode : Joueur VS Joueur")
-    #         print("Veuiller selectioner le Joueur 1")
-    #     elif (mode.upper() == "JO"):
-    #         print("\n\nVous avez sélectioner le mode : Joueur VS Ordinateur")
-    #         print("Veuiller selectioner la priorite de Jeu parmis :\n    -Je commence\n    -Je seconde")
-    #         prio = input("Entrez j1 ou j2 : \n")
-    #     else :
-    #         raise Exception("Mode de jeu non existant")
     
     def Turn(self):
         return 
