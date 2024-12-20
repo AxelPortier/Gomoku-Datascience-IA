@@ -19,6 +19,8 @@ class Game :
         #Liste comprenant tout nos masque
         self.masks = [mask_horizontal, mask_vertical, mask_diagonale_descendante, mask_diagonale_montante]
         
+        self.dico_ligne = {digit:lettre for lettre,digit in zip([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"ABCDEFGHIJKLMNO")}
+
         
         self.Init_Game()
         
@@ -77,8 +79,7 @@ class Game :
         if (self.mode == 2 and self.is_playing == 2) :
             #Faire le premier tour de l'ordi puis passe la main au Joueur
             pass
-        
-        while self.check_winner() != 0 :
+        while self.check_winner() == 0 :
             self.Turn(joueur,nb_turn)
             joueur += 1
             if (joueur>2) : joueur -= 2
@@ -88,11 +89,30 @@ class Game :
         self.GameOver(joueur)
     
     def Turn(self,joueur,nb_Turn):
-        print(joueur," Turn :",nb_Turn)
-        return 
+        #JJ
+        if (self.mode == 1):
+            os.system('cls')
+            print("Tour : ",nb_Turn,"\n",self.plateau,"\nC'est au Joueur ",joueur," de jouer")
+            actions_possible = self.Action()
+            while True :
+                ligne,colonne = str(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P) : ")).upper(),int(input("rentrer la colonne (0 1 2 3 4 5 6 7 8 9 10 11 12 13 14) : "))
+                ligne = self.dico_ligne[ligne]
+                if (ligne,colonne) in actions_possible:
+                    self.plateau.set_position([ligne,colonne],joueur)
+                    break
+                else :
+                    os.system('cls')
+                    print("Position déjà occupé ou inexistante")
+                    
+        #JO
+        else :
+            pass
+
+    def Action(self):  # retourne liste [(x,y)...] de position possible
+        return [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
     
     def GameOver(self,joueur):
-        pass
+        print("Game over")
     
     def check_winner(self):
         # Convolutions pour détecter les alignements
@@ -117,11 +137,12 @@ class Plateau:
         return self.plateau
     
     def set_position(self,pos,val):
+        if (val == 2) : val = 1j
         self.plateau[pos[0],pos[1]] = val  
 
     def __str__(self):  # Affiche dans la console le plateau
         cellule = {0: " ", 1: "X", 1j: "O"}
-        rep = "     "  # Espacement initial pour aligner les chiffres avec les colonnes
+        rep = "    "  # Espacement initial pour aligner les chiffres avec les colonnes
         
         # Ajout des indices des colonnes, alignés avec les cases
         for i in range(len(self.plateau[0])):
