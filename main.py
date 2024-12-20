@@ -244,18 +244,19 @@ def test_round():
     ]
 
 
-result = np.zeros(3)
-for _ in range(grids):
-    result += test_round()
+# result = np.zeros(3)
+# for _ in range(grids):
+#     result += test_round()
  #Programme de test
-print(f"Standard {result[0]:.6f}s")
-print(f"Matrix {result[1]:.6f}s")
-print(f"Complexe {result[2]:.6f}s")
+# print(f"Standard {result[0]:.6f}s")
+# print(f"Matrix {result[1]:.6f}s")
+# print(f"Complexe {result[2]:.6f}s")
 
 
-
+print(Game().play())
             
         
+
 
 
 
