@@ -6,21 +6,37 @@ from scipy.signal import convolve2d
 class Game :
     def __init__(self):
         self.plateau = Plateau()
-        self.Init()
+        print(f"Plateau initialisé : {self.plateau.get_plateau()}")
+        print("Bienvenue, vous voilà dans la variante du Gomoku : Joueur VS Ordinateur.\n") 
+        while True:  # Boucle jusqu'à une entrée valide
+            print("Veuillez sélectionner la priorité de jeu :\n    -Je commence (j1)\n    -Je seconde (j2)")
+            prio = input("Entrez j1 ou j2 : \n").lower()
+            if prio == "j1":
+                self.is_playing = 1
+                break
+            elif prio == "j2":
+                self.is_playing = 2
+                break
+            else:
+                print("Mode de jeu non existant. Veuillez réessayer.\n")
+    # def __init__(self):
+    #     self.plateau = Plateau()
+    #     self.Init()
+    #     self.is_playing=1
     
-    def Init(self):
-        print("Bienvenue, vous voilà dans la variante du Gomoku.")
-        print("Veuillez choisir quel mode de jeu vous voulez jouer parmi :\n    -Joueur VS Joueur (JJ)\n    -Joueur VS Ordinateur (JO)")
-        mode = input("Entrez jj ou jo : \n")
-        if (mode.upper() == "JJ"):
-            print("\n\nVous avez sélectioner le mode : Joueur VS Joueur")
-            print("Veuiller selectioner le Joueur 1")
-        elif (mode.upper() == "JO"):
-            print("\n\nVous avez sélectioner le mode : Joueur VS Ordinateur")
-            print("Veuiller selectioner la priorite de Jeu parmis :\n    -Je commence\n    -Je seconde")
-            prio = input("Entrez j1 ou j2 : \n")
-        else :
-            raise Exception("Mode de jeu non existant")
+    # def Init(self):
+    #     print("Bienvenue, vous voilà dans la variante du Gomoku.")
+    #     print("Veuillez choisir quel mode de jeu vous voulez jouer parmi :\n    -Joueur VS Joueur (JJ)\n    -Joueur VS Ordinateur (JO)")
+    #     mode = input("Entrez jj ou jo : \n")
+    #     if (mode.upper() == "JJ"):
+    #         print("\n\nVous avez sélectioner le mode : Joueur VS Joueur")
+    #         print("Veuiller selectioner le Joueur 1")
+    #     elif (mode.upper() == "JO"):
+    #         print("\n\nVous avez sélectioner le mode : Joueur VS Ordinateur")
+    #         print("Veuiller selectioner la priorite de Jeu parmis :\n    -Je commence\n    -Je seconde")
+    #         prio = input("Entrez j1 ou j2 : \n")
+    #     else :
+    #         raise Exception("Mode de jeu non existant")
     
     def Turn(self):
         return 
@@ -36,29 +52,30 @@ class Game :
 
     def play(self):  
         print(self.plateau)
-        is_playing=1
-        while check_winner(self.plateau)==0:
-            if is_playing==1:
+        while check_winner(self.plateau.get_plateau())==0:
+            if self.is_playing==1:
                 while True:
                     try:
-                        l,c=int(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P) : ")),int(input("rentrer la colonne (0 1 2 3 4 5 6 7 8 9 10 11 12 13 14) : "))
-                        if (l,c) in self.Action(self.plateau):
-                            board = Result(self.plateau, is_playing, (l, c))
+                        ligne=self.plateau.dico_ligne[input("\nrentrer la ligne (A B C D E F G H I J K L M N O P) : ")]
+                        colonne=int(input("rentrer la colonne (0 1 2 3 4 5 6 7 8 9 10 11 12 13 14) : "))
+                        if (ligne,colonne) in self.Action():
+                            self.Result(self.is_playing , (ligne,colonne))
                             break                    
                     except Exception as e:
                         print(f"\nErreur : {e}. \nVeuillez réessayer.\n")
                 print(self.plateau)
-                print(f"Vous avez joué : {(l,c)}\n")
-                if check_winner(board)!=0:
+                print(f"Vous avez joué : {(ligne , colonne)}\n")
+                if check_winner(self.plateau.get_plateau())!=0:
                     break
-                is_playing=2
+                self.is_playing=2
             else:
-                position_ordi=MiniMax(self.plateau,is_playing)
-                board=Result(self.plateau,is_playing,position_ordi)
+                print("TEST")
+                position_ordi=MiniMax(self.plateau.get_plateau(),self.is_playing)
+                self.Result(self.is_playing,position_ordi)
                 print(f"Joueur 2 (Ordinateur) joue : {position_ordi}")
-                is_playing=1
+                self.is_playing=1
                 print(self.plateau)
-        winner = check_winner(self.plateau)
+        winner = check_winner(self.plateau.get_plateau())
         if winner == 0:
             print("Match nul !")
         else:
@@ -67,9 +84,8 @@ class Game :
 
 
 class Plateau:
-    def __init__(self, plateau=None):
-        
-        self.dico_ligne = {digit:lettre for lettre,digit in zip("ABCDEFGHIJKLMNO",[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])}
+    def __init__(self, plateau=None):        
+        self.dico_ligne = {lettre:digit for lettre,digit in zip("ABCDEFGHIJKLMNO",[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])}
         if plateau == None:
             self.plateau = np.zeros((15, 15), dtype=int)
         else:
@@ -93,11 +109,12 @@ class Plateau:
         rep += "\n"  # Retour à la ligne pour le début du plateau
         # Construction du tableau
         i = 0
+        string="ABCDEFGHIJKLMNO"
         for ligne in self.plateau:
             # Ligne de séparation entre les cases
             rep += "    +" + "---+" * len(ligne) + "\n"
             # Contenu de la ligne
-            rep += f"{self.dico_ligne[i]}   "  # Ajout de l'indice de la ligne
+            rep += f"{string[i]}   "  # Ajout de l'indice de la ligne
             for cell in ligne:
                 rep += f"| {cellule[cell]} "  # Ajout du contenu de chaque case
             rep += "|\n"
