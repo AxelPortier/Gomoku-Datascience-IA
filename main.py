@@ -96,13 +96,16 @@ class Game :
             actions_possible = [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
             while True :
                 ligne,colonne = str(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P) : ")).upper(),int(input("rentrer la colonne (0 1 2 3 4 5 6 7 8 9 10 11 12 13 14) : "))
-                ligne = self.dico_ligne[ligne]
-                if (ligne,colonne) in actions_possible:
-                    self.plateau.set_position([ligne,colonne],joueur)
-                    break
-                else :
-                    os.system('cls')
-                    print("Position déjà occupé ou inexistante")
+                if ligne not in "ABCDEFGHIJKLMNOP":
+                    print("Posiiton inexistante. Réessayez")
+                else:
+                    ligne = self.dico_ligne[ligne]
+                    if (ligne,colonne) in actions_possible:
+                        self.plateau.set_position([ligne,colonne],joueur)
+                        break
+                    else :
+                        print("Position déjà occupé. Réessayez")
+            os.system('cls')
                     
         #JO
         else :
