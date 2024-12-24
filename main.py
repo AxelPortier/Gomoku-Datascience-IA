@@ -27,7 +27,7 @@ class Game :
     def Init_Game(self):
         
         #Clear console
-        #os.system('cls')
+        os.system('cls')
         
         print("Bienvenue, vous voilà dans une variante du Gomoku :\n")
         
@@ -76,9 +76,8 @@ class Game :
     def Play(self):  
         nb_turn = 1
         joueur = 1
-        if (self.mode == 2 and self.is_playing == 2) :
-            #Faire le premier tour de l'ordi puis passe la main au Joueur
-            pass
+        if (self.mode == 2 and self.is_playing == 2) :  # premier coup de l'ia forcément au milieu
+            self.plateau.set_position((7,7),self.is_playing)
         while self.check_winner() == 0 :
             self.Turn(joueur,nb_turn)
             joueur += 1
@@ -88,11 +87,56 @@ class Game :
         
         self.GameOver(joueur)
     
-    def minimax(self):
-        '''
-        alpha =  
-        '''   
-
+    def result(self,board, joueur, position): # retourne board modifié à la case position par 1 ou 2 SANS MODIF self.plateau !!!!
+        if board[position] != 0:
+            raise Exception("Position déjà occupée!")
+        new_board=board.copy()
+        new_board[position[0],position[1]] = joueur
+        return new_board
+    
+    def actions(self,board): # liste des positions non disponibles
+        return [(i,j) for i in range(3) for j in range(3) if board[i,j]==0]
+    
+    def minimax(self,board, joueur):
+        if joueur == 1:  # Joueur maximisant 
+            best_value = float('-inf')
+            best_action = None
+            for action in self.actions(board):
+                new_board = self.result(board,joueur,action)
+                value = self.min_value(new_board, 2)  # L'adversaire joue ensuite
+                if value > best_value:
+                    best_value = value
+                    best_action = action
+            return best_action
+        else:  # Joueur minimisant 
+            best_value = float('inf')
+            best_action = None
+            for action in self.actions(board):
+                new_board = self.result(board, joueur, action)
+                value = self.max_value(new_board, 1)  # L'adversaire joue ensuite
+                if value < best_value:
+                    best_value = value
+                    best_action = action
+            return best_action
+    
+    def max_value(self,board, joueur):
+        if self.check_winner()!=0 :
+            return self.check_winner()    
+        v = float('-inf')
+        for action in self.actions(board):
+            new_board = self.result(board, joueur, action)
+            v = max(v, self.min_value(new_board, 3 - joueur))
+        return v
+    
+    
+    def min_value(self,board,joueur):
+        if self.check_winner()!=0 :
+            return self.check_winner()        
+        v = float('inf')
+        for action in self.actions(board):
+            new_board = self.result(board,joueur, action)
+            v = min(v, self.max_value(new_board, 3 - joueur))
+        return v
 
     def Turn(self,joueur,nb_Turn):
         dic={2:"à l'IA",1:"au joueur"}
@@ -115,7 +159,7 @@ class Game :
         else :
             print("Tour : ",nb_Turn,"\n",self.plateau,"\nC'est",dic[joueur],"de jouer")
             if (joueur==2):    # Si c'est le tour de l'IA
-                self.plateau.set_position(self.Minimax(),joueur)
+                self.plateau.set_position(self.minimax(self.plateau.get_plateau(),joueur),joueur)
             else :  # Si c'est le tour du joueur                
                 actions_possible = [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
                 while True :
@@ -146,6 +190,7 @@ class Game :
         return 0 # Aucun gagnant
 
 class Plateau:
+
     def __init__(self, plateau=None):                
         if plateau == None:
             self.plateau = np.zeros((15,15),dtype=complex)
@@ -157,7 +202,8 @@ class Plateau:
         return self.plateau
     
     def set_position(self,pos,val):
-        if (val == 2) : val = 1j
+        if (val == 2) : 
+            val = 1j
         self.plateau[pos[0],pos[1]] = val  
 
     def __str__(self):  # Affiche dans la console le plateau
