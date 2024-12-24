@@ -95,6 +95,7 @@ class Game :
 
 
     def Turn(self,joueur,nb_Turn):
+        dic={2:"à l'IA",1:"au joueur"}
         #JJ
         if (self.mode == 1):
             os.system('cls')
@@ -112,7 +113,23 @@ class Game :
                     
         #JO
         else :
-            pass
+            print("Tour : ",nb_Turn,"\n",self.plateau,"\nC'est",dic[joueur],"de jouer")
+            if (joueur==2):    # Si c'est le tour de l'IA
+                self.plateau.set_position(self.Minimax(),joueur)
+            else :  # Si c'est le tour du joueur                
+                actions_possible = [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
+                while True :
+                    ligne,colonne = str(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P) : ")).upper(),int(input("rentrer la colonne (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) : "))
+                    if ligne not in "ABCDEFGHIJKLMNOP":
+                        print("Position inexistante. Réessayez")
+                    else:
+                        ligne = self.dico_ligne[ligne]
+                        if (ligne,colonne) in actions_possible:
+                            self.plateau.set_position([ligne,colonne-1],joueur)
+                            break
+                        else :
+                            print("Position déjà occupé. Réessayez")
+            os.system('cls')
 
     def GameOver(self,joueur):
         print("Game over")
