@@ -27,7 +27,7 @@ class Game :
     def Init_Game(self):
         
         #Clear console
-        os.system('cls')
+        #os.system('cls')
         
         print("Bienvenue, vous voilà dans une variante du Gomoku :\n")
         
@@ -62,14 +62,14 @@ class Game :
                         quitting = True
                         break
                     else:
-                        os.system('cls')
+                        #os.system('cls')
                         print("Mode de jeu non existant. Veuillez réessayer.\n")
                 break
             
             elif mode_input =="quit" or quitting:
                 break
             else:
-                os.system('cls')
+                #os.system('cls')
                 print("Mode de jeu non existant. Veuillez réessayer.\n")
         self.Play()
     
@@ -98,7 +98,7 @@ class Game :
         dic={2:"à l'IA",1:"au joueur"}
         #JJ
         if (self.mode == 1):
-            os.system('cls')
+            #os.system('cls')
             print("Tour : ",nb_Turn,"\n",self.plateau,"\nC'est au Joueur ",joueur," de jouer")
             actions_possible = [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
             while True :
@@ -108,7 +108,7 @@ class Game :
                     self.plateau.set_position([ligne,colonne-1],joueur)
                     break
                 else :
-                    os.system('cls')
+                    #os.system('cls')
                     print("Position déjà occupé ou inexistante")
                     
         #JO
@@ -129,7 +129,7 @@ class Game :
                             break
                         else :
                             print("Position déjà occupé. Réessayez")
-            os.system('cls')
+            #os.system('cls')
 
     def GameOver(self,joueur):
         print("Game over")
