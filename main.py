@@ -88,6 +88,12 @@ class Game :
         
         self.GameOver(joueur)
     
+    def minimax(self):
+        '''
+        alpha =  
+        '''   
+
+
     def Turn(self,joueur,nb_Turn):
         #JJ
         if (self.mode == 1):
