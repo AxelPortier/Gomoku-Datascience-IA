@@ -95,7 +95,7 @@ class Game :
         return new_board
     
     def actions(self,board): # liste des positions non disponibles
-        return [(i,j) for i in range(3) for j in range(3) if board[i,j]==0]
+        return [(i,j) for i in range(15) for j in range(15) if board[i,j]==0]
     
     def minimax(self,board, joueur):
         if joueur == 1:  # Joueur maximisant 
