@@ -27,7 +27,7 @@ class Game :
     def Init_Game(self):
         
         #Clear console
-        os.system('cls')
+        #os.system('cls')
         
         print("Bienvenue, vous voilà dans une variante du Gomoku :\n")
         
@@ -78,10 +78,12 @@ class Game :
         joueur = 1
         if (self.mode == 2 and self.is_playing == 2) :  # premier coup de l'ia forcément au milieu
             self.plateau.set_position((7,7),self.is_playing)
+            nb_turn+=1
         while self.check_winner() == 0 :
             self.Turn(joueur,nb_turn)
             joueur += 1
-            if (joueur>2) : joueur -= 2
+            if (joueur>2) : 
+                joueur -= 2
             nb_turn += 1
             #if(nb_turn>100) : break #Enlever quand on peut jouer les joueurs
         
@@ -94,16 +96,23 @@ class Game :
         new_board[position[0],position[1]] = joueur
         return new_board
     
-    def actions(self,board): # liste des positions non disponibles
-        return [(i,j) for i in range(15) for j in range(15) if board[i,j]==0]
+    def actions(self,board,nb_Turn ): # liste des positions non disponibles
+        if nb_Turn==3:
+            actions_possibles=[(i,j) for i in range(15) for j in range(4,12) if board[i,j]==0]
+        else:
+            actions_possibles=[(i,j) for i in range(15) for j in range(15) if board[i,j]==0]
+        return  actions_possibles
     
-    def minimax(self,board, joueur):
+    def minimax(self,board, joueur,nb_Turn):
         if joueur == 1:  # Joueur maximisant 
             best_value = float('-inf')
             best_action = None
-            for action in self.actions(board):
+            i=0
+            for action in self.actions(board,nb_Turn):
+                i+=1
+                print(i,"ème coup sur",len(self.actions(board, nb_Turn)))
                 new_board = self.result(board,joueur,action)
-                value = self.min_value(new_board, 2)  # L'adversaire joue ensuite
+                value = self.min_value(new_board, 2,nb_Turn)  # L'adversaire joue ensuite
                 if value > best_value:
                     best_value = value
                     best_action = action
@@ -111,31 +120,31 @@ class Game :
         else:  # Joueur minimisant 
             best_value = float('inf')
             best_action = None
-            for action in self.actions(board):
+            for action in self.actions(board,nb_Turn):
                 new_board = self.result(board, joueur, action)
-                value = self.max_value(new_board, 1)  # L'adversaire joue ensuite
+                value = self.max_value(new_board, 1,nb_Turn)  # L'adversaire joue ensuite
                 if value < best_value:
                     best_value = value
                     best_action = action
             return best_action
     
-    def max_value(self,board, joueur):
+    def max_value(self,board, joueur,nb_Turn):
         if self.check_winner()!=0 :
             return self.check_winner()    
         v = float('-inf')
-        for action in self.actions(board):
+        for action in self.actions(board,nb_Turn):
             new_board = self.result(board, joueur, action)
-            v = max(v, self.min_value(new_board, 3 - joueur))
+            v = max(v, self.min_value(new_board, 3 - joueur,nb_Turn ))
         return v
     
     
-    def min_value(self,board,joueur):
+    def min_value(self,board,joueur,nb_Turn):
         if self.check_winner()!=0 :
             return self.check_winner()        
         v = float('inf')
-        for action in self.actions(board):
+        for action in self.actions(board,nb_Turn):
             new_board = self.result(board,joueur, action)
-            v = min(v, self.max_value(new_board, 3 - joueur))
+            v = min(v, self.max_value(new_board, 3 - joueur,nb_Turn))
         return v
 
     def Turn(self,joueur,nb_Turn):
@@ -146,34 +155,50 @@ class Game :
             print("Tour : ",nb_Turn,"\n",self.plateau,"\nC'est au Joueur ",joueur," de jouer")
             actions_possible = [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
             while True :
-                ligne,colonne = str(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P) : ")).upper(),int(input("rentrer la colonne ( 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) : "))
-                ligne = self.dico_ligne[ligne]
-                if (ligne,colonne) in actions_possible:
-                    self.plateau.set_position([ligne,colonne-1],joueur)
-                    break
-                else :
-                    #os.system('cls')
-                    print("Position déjà occupé ou inexistante")
-                    
+                if (nb_Turn==3):
+                    ligne,colonne = str(input("\nrentrer la ligne (A B C D L M N O : )")).upper(),int(input("rentrer la colonne (1 2 3 4 12 13 14 15) : "))
+                    ligne = self.dico_ligne[ligne]
+                    if (ligne,colonne) not in [(i,j) for i in range(15) for j in range(4,12) if self.plateau.get_plateau()[i,j]==0]:
+                        self.plateau.set_position([ligne,colonne-1],joueur)
+                        break
+                    else :
+                        #os.system('cls')
+                        print("Position déjà occupé ou inexistante")
+                else:
+                    ligne,colonne = str(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P : ")).upper(),int(input("rentrer la colonne (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) : "))
+                    ligne = self.dico_ligne[ligne]
+                    if (ligne,colonne) in actions_possible:
+                        self.plateau.set_position([ligne,colonne-1],joueur)
+                        break
+                    else :
+                        #os.system('cls')
+                        print("Position déjà occupé ou inexistante")                    
         #JO
         else :
             print("Tour : ",nb_Turn,"\n",self.plateau,"\nC'est",dic[joueur],"de jouer")
             if (joueur==2):    # Si c'est le tour de l'IA
-                self.plateau.set_position(self.minimax(self.plateau.get_plateau(),joueur),joueur)
-            else :  # Si c'est le tour du joueur                
-                actions_possible = [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
-                while True :
-                    ligne,colonne = str(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P) : ")).upper(),int(input("rentrer la colonne (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) : "))
-                    if ligne not in "ABCDEFGHIJKLMNOP":
-                        print("Position inexistante. Réessayez")
-                    else:
-                        ligne = self.dico_ligne[ligne]
-                        if (ligne,colonne) in actions_possible:
-                            self.plateau.set_position([ligne,colonne-1],joueur)
-                            break
-                        else :
-                            print("Position déjà occupé. Réessayez")
-            #os.system('cls')
+                self.plateau.set_position(self.minimax(self.plateau.get_plateau(),joueur,nb_Turn),joueur)
+            else :  # Si c'est le tour du joueur            
+                    actions_possible = [(i,j) for i in range(15) for j in range(15) if self.plateau.get_plateau()[i,j]==0]
+                    while True :
+                        if (nb_Turn==3):
+                            ligne,colonne = str(input("\nrentrer la ligne (A B C D L M N O : )")).upper(),int(input("rentrer la colonne (1 2 3 4 12 13 14 15) : "))
+                            ligne = self.dico_ligne[ligne]
+                            if (ligne,colonne) not in [(i,j) for i in range(15) for j in range(4,12) if self.plateau.get_plateau()[i,j]==0]:
+                                self.plateau.set_position([ligne,colonne-1],joueur)
+                                break
+                            else :
+                                #os.system('cls')
+                                print("Position déjà occupé ou inexistante")
+                        else:
+                            ligne,colonne = str(input("\nrentrer la ligne (A B C D E F G H I J K L M N O P : ")).upper(),int(input("rentrer la colonne (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) : "))
+                            ligne = self.dico_ligne[ligne]
+                            if (ligne,colonne) in actions_possible:
+                                self.plateau.set_position([ligne,colonne-1],joueur)
+                                break
+                            else :
+                                #os.system('cls')
+                                print("Position déjà occupé ou inexistante")  
 
     def GameOver(self,joueur):
         print("Game over")
