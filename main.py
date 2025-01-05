@@ -8,7 +8,7 @@ class Game :
         #Constantes du jeu
         self.taille_plateau = 5
         self.longueur_victoire = 5
-        self.centre = (self.taille_plateau // 2, self.taille_plateau // 2) if self.taille_plateau%2 == 0 else ((self.taille_plateau // 2) + 1, (self.taille_plateau // 2) + 1)
+        self.centre = (self.taille_plateau // 2, self.taille_plateau // 2)
 
         #Modes de jeu
         self.mode_jj  = 1
@@ -140,7 +140,7 @@ class Game :
     def get_player_move(self, nb_Turn):
         actions_possibles = self.actions(self.plateau.get_plateau(), nb_Turn)
         if nb_Turn == 1:
-            print(f"Vous ne pouvez jouer qu'au centre : {self.centre}")
+            print(f"Vous ne pouvez jouer qu'au centre : {((self.taille_plateau // 2) + 1, (self.taille_plateau // 2) + 1)}")
             return self.centre
         elif nb_Turn == 3:
             print("Vous ne pouvez jouer que de 3-12 et C-M")
