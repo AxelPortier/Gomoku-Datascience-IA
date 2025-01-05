@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 import numpy as np
 from scipy.signal import convolve2d
 import time
@@ -6,7 +9,7 @@ class Game :
     #Initialisation de la class
     def __init__(self):
         #Constantes du jeu
-        self.taille_plateau = 5
+        self.taille_plateau = 15
         self.longueur_victoire = 5
         self.centre = (self.taille_plateau // 2, self.taille_plateau // 2)
 
@@ -143,13 +146,13 @@ class Game :
             print(f"Vous ne pouvez jouer qu'au centre : {((self.taille_plateau // 2) + 1, (self.taille_plateau // 2) + 1)}")
             return self.centre
         elif nb_Turn == 3:
-            print("Vous ne pouvez jouer que de 3-12 et C-M")
-            actions_possibles = [(i, j) for i, j in actions_possibles if 2 <= j <= 11 and 'C' <= chr(i + ord('A')) <= 'M']
+            print("Vous pouvez jouer dans les cases situées en dehors du carré central 7x7, \nc'est-à-dire sur les lignes et colonnes avant la ligne E ou après la ligne J, \nainsi que sur les colonnes avant la colonne 5 ou après la colonne 10.")
+
         
         while True:
             try:
                 ligne_input = input("Entrer la ligne (A à O) : ").upper()
-                if ligne_input < 'A' or ligne_input > 'O':
+                if len(ligne_input)!=1 or ligne_input < 'A' or ligne_input > 'O':
                     raise ValueError("Ligne invalide. Veuillez entrer une lettre entre A et O.")
                 
                 colonne_input = input("Entrer la colonne (1 à 15) : ")
@@ -174,17 +177,17 @@ class Game :
     
     # Fonction qui retourne les actions possibles changer -3 par 3 quand on joue en 15*15
     def actions(self,board,nb_Turn ):
+        actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0]
         if nb_Turn==1:
             actions_possibles=[self.centre]
-        elif nb_Turn==-3:
-            actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(4,12) if board[i,j]==0]
-        else:
-            actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0]
+        elif nb_Turn==3:
+            actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11) if board[i,j]==0]
+            actions_possibles=[(i, j) for i in range(15) for j in range(15) if (i, j) not in actions_possibles]
         return  actions_possibles
     
       
     #Retourne le meilleur coup selon l'algorithme minimax avec élagage
-    def minimax(self, board, joueur, nb_Turn, depth=3):
+    def minimax(self, board, joueur, nb_Turn, depth=15):
         start_time = time.time()
         alpha = float('-inf')
         beta = float('inf')
