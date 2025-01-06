@@ -200,6 +200,7 @@ class Game :
                     
                 new_board = self.result(board, joueur, move)
                 
+                value = self.min_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time)
                 if value > alpha:
                     alpha = value
                     best_move = move
