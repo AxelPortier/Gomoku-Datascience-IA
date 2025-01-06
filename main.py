@@ -183,7 +183,7 @@ class Game :
     
       
     #Retourne le meilleur coup selon l'algorithme minimax avec élagage
-    def minimax(self, board, joueur, nb_Turn, depth=15):
+    def minimax(self, board, joueur, nb_Turn, depth=3):
         start_time = time.time()
         alpha = float('-inf')
         beta = float('inf')
