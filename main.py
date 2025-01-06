@@ -199,7 +199,6 @@ class Game :
                     return best_move
                     
                 new_board = self.result(board, joueur, move)
-                value = self.min_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time)
                 
                 if value > alpha:
                     alpha = value
@@ -264,15 +263,18 @@ class Game :
             conv_result = convolve2d(board, mask, mode="valid")
             my_align = np.real(conv_result) if joueur == 1 else np.imag(conv_result)
             opp_align = np.imag(conv_result) if joueur == 1 else np.real(conv_result)
+           
             
             #Attaque
-            score += np.sum(my_align == 4) * 1000   #Quatre alignés 
-            score += np.sum(my_align == 3) * 100    #Trois alignés ouverts
-            score += np.sum(my_align == 2) * 10     #Deux alignés
+            score += np.sum(my_align == 5) * 100000   #Cinq alignés 
+            score += np.sum(my_align == 4) * 5000    #Quatre alignés 
+            score += np.sum(my_align == 3) * 500   #Trois alignés ouverts
+            score += np.sum(my_align == 2) * 50    #Deux alignés
             
             #Défense (plus prioritaire)
-            score -= np.sum(opp_align == 2) * 50  #Bloquer quatre
-            score -= np.sum(opp_align == 3) * 2000   #Bloquer trois ouvert
+            score -= np.sum(opp_align == 4) * 10000   #Quatre alignés 
+            score -= np.sum(opp_align == 3) * 200    #Trois alignés ouverts
+            score -= np.sum(opp_align == 2) * 10   #Bloquer trois ouvert
         
         return score
 
