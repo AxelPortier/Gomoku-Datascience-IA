@@ -173,12 +173,12 @@ class Game :
     
     # Fonction qui retourne les actions possibles changer -3 par 3 quand on joue en 15*15
     def actions(self,board,nb_Turn ):
-        actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0]
+        actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0.+0.j]
         if nb_Turn==1:
             actions_possibles=[self.centre]
         elif nb_Turn==3:
-            actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11) if board[i,j]==0]
-            actions_possibles=[(i, j) for i in range(15) for j in range(15) if (i, j) not in actions_possibles]
+            actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11)]
+            actions_possibles=[(i, j) for i in range(15) for j in range(15) if (i, j) not in actions_possibles and board[i,j]==0]
         return  actions_possibles
     
       
@@ -189,7 +189,7 @@ class Game :
         beta = float('inf')
         
         #Récupère et ordonne les coups
-        moves = self.order_moves(board, self.actions(board, nb_Turn), joueur)
+        moves = self.order_moves(board, self.actions(board,nb_Turn), joueur)
         best_move = moves[0]
         
         try:
@@ -271,8 +271,8 @@ class Game :
             score += np.sum(my_align == 2) * 10     #Deux alignés
             
             #Défense (plus prioritaire)
-            score -= np.sum(opp_align == 4) * 2000  #Bloquer quatre
-            score -= np.sum(opp_align == 3) * 200   #Bloquer trois ouvert
+            score -= np.sum(opp_align == 2) * 50  #Bloquer quatre
+            score -= np.sum(opp_align == 3) * 2000   #Bloquer trois ouvert
         
         return score
 
