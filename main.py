@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import numpy as np
 from scipy.signal import convolve2d
 import time
@@ -128,7 +125,7 @@ class Game :
             (self.mode_jo, 2): "C'est à l'IA de jouer"
         }
         
-        print(f"Tour : {nb_Turn}")
+        print(f"Tour : {nb_Turn-1}")
         print(self.plateau)
         print(action_messages[(self.mode, joueur)])
         
@@ -147,7 +144,6 @@ class Game :
             return self.centre
         elif nb_Turn == 3:
             print("Vous pouvez jouer dans les cases situées en dehors du carré central 7x7, \nc'est-à-dire sur les lignes et colonnes avant la ligne E ou après la ligne J, \nainsi que sur les colonnes avant la colonne 5 ou après la colonne 10.")
-
         
         while True:
             try:
