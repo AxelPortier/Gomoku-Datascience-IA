@@ -300,9 +300,6 @@ class Game :
             for mask in self.masques[i]:
                 rep+=np.sum(np.imag(convolve2d(board,mask,mode="valid"))==i)*listeplus[i-3]
                 opp+=np.sum(np.real(convolve2d(board,mask,mode="valid"))==i)*listemoins[i-3]
-            print(rep,opp)
-        print(board, rep-opp)
-        input()
         return rep-opp
 
 
