@@ -22,30 +22,34 @@ class Game :
         self.plateau = Plateau(self.taille_plateau)
         
         #Création des masques pour la détection de victoire
-        masque_horizontal = np.ones((1, self.longueur_victoire))
-        masque_vertical = np.ones((self.longueur_victoire, 1))
-        masque_diagonal = np.eye(self.longueur_victoire)
-        masque_antidiagonal = np.fliplr(masque_diagonal)
-        self.masques_win = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
+        self.masques = {
+            'win': [
+                np.ones((1, self.longueur_victoire)),
+                np.ones((self.longueur_victoire, 1)),
+                np.eye(self.longueur_victoire),
+                np.fliplr(np.eye(self.longueur_victoire))
+            ],
+            4: [
+                np.ones((1, 4)),
+                np.ones((4, 1)),
+                np.eye(4),
+                np.fliplr(np.eye(4))
+            ],
+            3: [
+                np.ones((1, 3)),
+                np.ones((3, 1)),
+                np.eye(3),
+                np.fliplr(np.eye(3))
+            ],
+            2: [
+                np.ones((1, 2)),
+                np.ones((2, 1)),
+                np.eye(2),
+                np.fliplr(np.eye(2))
+            ]
+        }
         
-        masque_horizontal = np.ones((1, self.longueur_victoire-1))
-        masque_vertical = np.ones((self.longueur_victoire-1, 1))
-        masque_diagonal = np.eye(self.longueur_victoire-1)
-        masque_antidiagonal = np.fliplr(masque_diagonal)
-        self.masques_4 = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
-        
-        masque_horizontal = np.ones((1, self.longueur_victoire-2))
-        masque_vertical = np.ones((self.longueur_victoire-2, 1))
-        masque_diagonal = np.eye(self.longueur_victoire-2)
-        masque_antidiagonal = np.fliplr(masque_diagonal)
-        self.masques_3 = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
-        
-        masque_horizontal = np.ones((1, self.longueur_victoire-3))
-        masque_vertical = np.ones((self.longueur_victoire-3, 1))
-        masque_diagonal = np.eye(self.longueur_victoire-3)
-        masque_antidiagonal = np.fliplr(masque_diagonal)
-        self.masques_2 = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
-        
+        print(self.masques[4])
         #Démarrage du jeu
         self.Init_Game()
         
@@ -125,7 +129,7 @@ class Game :
     #Check les conditions de victoire
     def check_winner(self):
         # Convolutions pour détecter les alignements
-        for mask in self.masques_win:
+        for mask in self.masques["win"]:
             conv_result = convolve2d(self.plateau.get_plateau(), mask, mode="valid")
             # Vérification pour le joueur 1 (réel) et joueur 2 (imaginaire)
             if np.any(np.real(conv_result) == self.longueur_victoire):
