@@ -6,8 +6,8 @@ class Game :
     #Initialisation de la class
     def __init__(self):
         #Constantes du jeu
-        self.taille_plateau = 15
-        self.longueur_victoire = 5
+        self.taille_plateau = 3
+        self.longueur_victoire = 3
         self.centre = (self.taille_plateau // 2, self.taille_plateau // 2)
 
         #Modes de jeu
@@ -177,8 +177,8 @@ class Game :
         if nb_Turn==1:
             actions_possibles=[self.centre]
         elif nb_Turn==3:
-            actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11)]
-            actions_possibles=[(i, j) for i in range(15) for j in range(15) if (i, j) not in actions_possibles and board[i,j]==0]
+            #actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11)]
+            actions_possibles=[(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if (i, j) not in actions_possibles and board[i,j]==0]
         return  actions_possibles
     
       
