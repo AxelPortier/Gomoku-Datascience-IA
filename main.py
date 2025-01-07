@@ -26,7 +26,25 @@ class Game :
         masque_vertical = np.ones((self.longueur_victoire, 1))
         masque_diagonal = np.eye(self.longueur_victoire)
         masque_antidiagonal = np.fliplr(masque_diagonal)
-        self.masques = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
+        self.masques_win = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
+        
+        masque_horizontal = np.ones((1, self.longueur_victoire-1))
+        masque_vertical = np.ones((self.longueur_victoire-1, 1))
+        masque_diagonal = np.eye(self.longueur_victoire-1)
+        masque_antidiagonal = np.fliplr(masque_diagonal)
+        self.masques_4 = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
+        
+        masque_horizontal = np.ones((1, self.longueur_victoire-2))
+        masque_vertical = np.ones((self.longueur_victoire-2, 1))
+        masque_diagonal = np.eye(self.longueur_victoire-2)
+        masque_antidiagonal = np.fliplr(masque_diagonal)
+        self.masques_3 = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
+        
+        masque_horizontal = np.ones((1, self.longueur_victoire-3))
+        masque_vertical = np.ones((self.longueur_victoire-3, 1))
+        masque_diagonal = np.eye(self.longueur_victoire-3)
+        masque_antidiagonal = np.fliplr(masque_diagonal)
+        self.masques_2 = [masque_horizontal, masque_vertical, masque_diagonal, masque_antidiagonal]
         
         #Démarrage du jeu
         self.Init_Game()
@@ -107,7 +125,7 @@ class Game :
     #Check les conditions de victoire
     def check_winner(self):
         # Convolutions pour détecter les alignements
-        for mask in self.masques:
+        for mask in self.masques_win:
             conv_result = convolve2d(self.plateau.get_plateau(), mask, mode="valid")
             # Vérification pour le joueur 1 (réel) et joueur 2 (imaginaire)
             if np.any(np.real(conv_result) == self.longueur_victoire):
@@ -260,7 +278,7 @@ class Game :
         score = 0
         
         #Détection des patterns avec poids optimisés
-        for mask in self.masques:
+        for mask in self.masques_win:
             conv_result = convolve2d(board, mask, mode="valid")
             my_align = np.real(conv_result) if joueur == 1 else np.imag(conv_result)
             opp_align = np.imag(conv_result) if joueur == 1 else np.real(conv_result)
