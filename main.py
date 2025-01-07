@@ -1,12 +1,13 @@
 import numpy as np
 from scipy.signal import convolve2d
 import time
+from scipy.ndimage import convolve
 
 class Game :
     #Initialisation de la class
     def __init__(self):
         #Constantes du jeu
-        self.taille_plateau = 15
+        self.taille_plateau = 9
         self.longueur_victoire = 5
         self.centre = (self.taille_plateau // 2, self.taille_plateau // 2)
 
@@ -22,6 +23,9 @@ class Game :
         self.plateau = Plateau(self.taille_plateau)
         
         #Création des masques pour la détection de victoire
+        self.matriceadj = np.array([[1, 1, 1],
+                   [1, 0,  1],
+                   [1, 1, 1]])
         self.masques = {
             'win': [
                 np.ones((1, self.longueur_victoire)),
@@ -191,38 +195,34 @@ class Game :
         new_board[position[0], position[1]] = val
         return new_board
 
-    def get_adjacent(self,board, i, j):
-        n, m = board.shape  # Dimensions de la matrice
-        directions = [(-1, -1), (-1, 0), (-1, 1),  # Haut-gauche, haut, haut-droite
-                    (0, -1),         (0, 1),    # Gauche, droite
-                    (1, -1), (1, 0), (1, 1)]    # Bas-gauche, bas, bas-droite
 
-        adjacent = []
-        for di, dj in directions:
-            ni, nj = i + di, j + dj  # Nouvelle position
-            if 0 <= ni < n and 0 <= nj < m:  # Vérification des bordures
-        print(board[i,j],adjacent)
-        return adjacent
     
     # Fonction qui retourne les actions possibles changer -3 par 3 quand on joue en 15*15
-    def actions(self,board,nb_Turn ):
-        actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0.+0.j and  (i,j) in self.get_adjacent(board,i,j) ]
+    def actions(self,board,nb_Turn,bot=0):
         if nb_Turn==1:
             actions_possibles=[self.centre]
         elif nb_Turn==3:
-            actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11)]
-            actions_possibles=[(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if (i, j) not in actions_possibles and board[i,j]==0]
+            if board[2,8]==0:
+                return [(2,7)]
+            else:
+                return [(11,7)]
+        else:
+            if bot == 1:
+                boardcandidats = convolve((board != 0).astype(int), self.matriceadj, mode="constant", cval=0)
+                actions_possibles= [(i, j) for i in range(boardcandidats.shape[0]) for j in range(boardcandidats.shape[1]) if boardcandidats[i,j]!=0 and board[i,j]==0]
+            else:
+                actions_possibles= [(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0]
         return  actions_possibles
     
       
     #Retourne le meilleur coup selon l'algorithme minimax avec élagage
-    def minimax(self, board, joueur, nb_Turn, depth=2):
+    def minimax(self, board, joueur, nb_Turn, depth=1):
         start_time = time.time()
         alpha = float('-inf')
         beta = float('inf')
         
         #Récupère et ordonne les coups
-        moves = self.order_moves(board, self.actions(board,nb_Turn), joueur)
+        moves = self.order_moves(board, self.actions(board,nb_Turn,1), joueur)
         best_move = moves[0]
         
         try:
@@ -293,13 +293,16 @@ class Game :
         score = 0
         rep = 0
         opp = 0
-        listeplus = [10,100]
-        listemoins= [20,200]
-        for i in range(3,5):
+        listeplus = [1,2,100]
+        listemoins= [10,20,200]
+        for i in range(2,5):
 
             for mask in self.masques[i]:
                 rep+=np.sum(np.imag(convolve2d(board,mask,mode="valid"))==i)*listeplus[i-3]
                 opp+=np.sum(np.real(convolve2d(board,mask,mode="valid"))==i)*listemoins[i-3]
+            print(rep,opp)
+        print(board, rep-opp)
+        input()
         return rep-opp
 
 
