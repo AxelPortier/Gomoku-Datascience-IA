@@ -190,10 +190,23 @@ class Game :
         val = 1j if joueur == 2 else joueur
         new_board[position[0], position[1]] = val
         return new_board
+
+    def get_adjacent(self,board, i, j):
+        n, m = board.shape  # Dimensions de la matrice
+        directions = [(-1, -1), (-1, 0), (-1, 1),  # Haut-gauche, haut, haut-droite
+                    (0, -1),         (0, 1),    # Gauche, droite
+                    (1, -1), (1, 0), (1, 1)]    # Bas-gauche, bas, bas-droite
+
+        adjacent = []
+        for di, dj in directions:
+            ni, nj = i + di, j + dj  # Nouvelle position
+            if 0 <= ni < n and 0 <= nj < m:  # Vérification des bordures
+        print(board[i,j],adjacent)
+        return adjacent
     
     # Fonction qui retourne les actions possibles changer -3 par 3 quand on joue en 15*15
     def actions(self,board,nb_Turn ):
-        actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0.+0.j]
+        actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0.+0.j and  (i,j) in self.get_adjacent(board,i,j) ]
         if nb_Turn==1:
             actions_possibles=[self.centre]
         elif nb_Turn==3:
