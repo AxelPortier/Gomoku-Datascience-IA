@@ -195,7 +195,7 @@ class Game :
         if nb_Turn==1:
             actions_possibles=[self.centre]
         elif nb_Turn==3:
-            #actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11)]
+            actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11)]
             actions_possibles=[(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if (i, j) not in actions_possibles and board[i,j]==0]
         return  actions_possibles
     
@@ -276,9 +276,15 @@ class Game :
     #Évalue le plateau pour un joueur donné
     def evaluate_board(self, board, joueur):
         score = 0
-        
+        rep = 0
+        print(self.masques_2)
+        for elem in self.masques_2:
+            print(elem)
+            rep+=(np.sum(convolve2d(board,elem,mode = "valid")))
+        input()
         #Détection des patterns avec poids optimisés
         for mask in self.masques_win:
+
             conv_result = convolve2d(board, mask, mode="valid")
             my_align = np.real(conv_result) if joueur == 1 else np.imag(conv_result)
             opp_align = np.imag(conv_result) if joueur == 1 else np.real(conv_result)
@@ -294,7 +300,7 @@ class Game :
             score -= np.sum(opp_align == 4) * 10000   #Quatre alignés 
             score -= np.sum(opp_align == 3) * 200    #Trois alignés ouverts
             score -= np.sum(opp_align == 2) * 10   #Bloquer trois ouvert
-        
+        print(board,rep)
         return score
 
 
