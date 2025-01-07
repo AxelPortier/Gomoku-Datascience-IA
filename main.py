@@ -6,8 +6,8 @@ class Game :
     #Initialisation de la class
     def __init__(self):
         #Constantes du jeu
-        self.taille_plateau = 3
-        self.longueur_victoire = 3
+        self.taille_plateau = 15
+        self.longueur_victoire = 5
         self.centre = (self.taille_plateau // 2, self.taille_plateau // 2)
 
         #Modes de jeu
@@ -48,8 +48,6 @@ class Game :
                 np.fliplr(np.eye(2))
             ]
         }
-        
-        print(self.masques[4])
         #Démarrage du jeu
         self.Init_Game()
         
@@ -198,14 +196,14 @@ class Game :
         actions_possibles=[(i,j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0.+0.j]
         if nb_Turn==1:
             actions_possibles=[self.centre]
-        #elif nb_Turn==3:
-            #actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11)]
-            #actions_possibles=[(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if (i, j) not in actions_possibles and board[i,j]==0]
+        elif nb_Turn==3:
+            actions_possibles=[(i,j) for i in range(4,11) for j in range(4,11)]
+            actions_possibles=[(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if (i, j) not in actions_possibles and board[i,j]==0]
         return  actions_possibles
     
       
     #Retourne le meilleur coup selon l'algorithme minimax avec élagage
-    def minimax(self, board, joueur, nb_Turn, depth=3):
+    def minimax(self, board, joueur, nb_Turn, depth=2):
         start_time = time.time()
         alpha = float('-inf')
         beta = float('inf')
@@ -217,8 +215,8 @@ class Game :
         try:
             for move in moves:
                 #Vérifie le temps
-                if time.time() - start_time > 4.5:
-                    return best_move
+                '''if time.time() - start_time > 4.5:
+                    return best_move'''
                     
                 new_board = self.result(board, joueur, move)
                 
@@ -233,8 +231,8 @@ class Game :
         return best_move
     
     def max_value(self, board, joueur, nb_Turn, depth, alpha, beta, start_time):
-        if time.time() - start_time > 4.5:
-            return self.evaluate_board(board, joueur)
+        '''if time.time() - start_time > 4.5:
+            return self.evaluate_board(board, joueur)'''
             
         if depth == 0 or self.check_winner():
             return self.evaluate_board(board, joueur)
@@ -251,8 +249,8 @@ class Game :
         return v
 
     def min_value(self, board, joueur, nb_Turn, depth, alpha, beta, start_time):
-        if time.time() - start_time > 4.5:
-            return self.evaluate_board(board, joueur)
+        '''if time.time() - start_time > 4.5:
+            return self.evaluate_board(board, joueur)'''
             
         if depth == 0 or self.check_winner():
             return self.evaluate_board(board, joueur)
@@ -281,27 +279,15 @@ class Game :
     def evaluate_board(self, board, joueur):
         score = 0
         rep = 0
-        
-        #Détection des patterns avec poids optimisés
-        for mask in self.masques["win"]:
+        opp = 0
+        listeplus = [10,100]
+        listemoins= [20,200]
+        for i in range(3,5):
 
-            conv_result = convolve2d(board, mask, mode="valid")
-            my_align = np.real(conv_result) if joueur == 1 else np.imag(conv_result)
-            opp_align = np.imag(conv_result) if joueur == 1 else np.real(conv_result)
-           
-            
-            #Attaque
-            score += np.sum(my_align == 5) * 100000   #Cinq alignés 
-            score += np.sum(my_align == 4) * 5000    #Quatre alignés 
-            score += np.sum(my_align == 3) * 500   #Trois alignés ouverts
-            score += np.sum(my_align == 2) * 50    #Deux alignés
-            
-            #Défense (plus prioritaire)
-            score -= np.sum(opp_align == 4) * 10000   #Quatre alignés 
-            score -= np.sum(opp_align == 3) * 200    #Trois alignés ouverts
-            score -= np.sum(opp_align == 2) * 10   #Bloquer trois ouvert
-        print(board,rep)
-        return score
+            for mask in self.masques[i]:
+                rep+=np.sum(np.imag(convolve2d(board,mask,mode="valid"))==i)*listeplus[i-3]
+                opp+=np.sum(np.real(convolve2d(board,mask,mode="valid"))==i)*listemoins[i-3]
+        return rep-opp
 
 
 
