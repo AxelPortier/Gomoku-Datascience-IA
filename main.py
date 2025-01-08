@@ -15,6 +15,7 @@ class Game :
         self.mode_jj  = 1
         self.mode_jo  = 2
         
+        
         #Identifiants des joueurs
         self.joueur_1 = 1
         self.joueur_2 = 2
@@ -222,7 +223,7 @@ class Game :
         beta = float('inf')
         
         #Récupère et ordonne les coups
-        moves = self.order_moves(board, self.actions(board,nb_Turn,1), joueur)
+        moves = self.order_moves(board, self.actions(board, nb_Turn, 1), joueur)
         best_move = moves[0]
         
         try:
@@ -233,7 +234,7 @@ class Game :
                     
                 new_board = self.result(board, joueur, move)
                 
-                value = self.min_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time)
+                value = self.min_value(new_board, 3-joueur, nb_Turn+1, depth-1, alpha, beta, start_time)
                 if value > alpha:
                     alpha = value
                     best_move = move
@@ -255,7 +256,7 @@ class Game :
         
         for move in self.order_moves(board, moves, joueur):
             new_board = self.result(board, joueur, move)
-            v = max(v, self.min_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time))
+            v = max(v, self.min_value(new_board, 3-joueur, nb_Turn+1, depth-1, alpha, beta, start_time))
             if v >= beta:
                 return v
             alpha = max(alpha, v)
@@ -273,7 +274,7 @@ class Game :
         
         for move in self.order_moves(board, moves, joueur):
             new_board = self.result(board, joueur, move)
-            v = min(v, self.max_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time))
+            v = min(v, self.max_value(new_board, 3-joueur, nb_Turn+1, depth-1, alpha, beta, start_time))
             if v <= alpha:
                 return v
             beta = min(beta, v)
@@ -290,7 +291,6 @@ class Game :
     
     #Évalue le plateau pour un joueur donné
     def evaluate_board(self, board, joueur):
-        score = 0
         rep = 0
         opp = 0
         listeplus = [1,2,100]
