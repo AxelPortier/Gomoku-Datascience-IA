@@ -7,8 +7,8 @@ class Game :
     #Initialisation de la class
     def __init__(self):
         #Constantes du jeu
-        self.taille_plateau = 9
-        self.longueur_victoire = 5
+        self.taille_plateau = 15
+        self.longueur_victoire  = 5
         self.centre = (self.taille_plateau // 2, self.taille_plateau // 2)
 
         #Modes de jeu
@@ -201,7 +201,7 @@ class Game :
     def actions(self,board,nb_Turn,bot=0):
         if nb_Turn==1:
             actions_possibles=[self.centre]
-        elif nb_Turn==3:
+        elif nb_Turn==3 and self.taille_plateau==15:
             if board[2,8]==0:
                 return [(2,7)]
             else:
@@ -212,11 +212,12 @@ class Game :
                 actions_possibles= [(i, j) for i in range(boardcandidats.shape[0]) for j in range(boardcandidats.shape[1]) if boardcandidats[i,j]!=0 and board[i,j]==0]
             else:
                 actions_possibles= [(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0]
+            
         return  actions_possibles
     
       
     #Retourne le meilleur coup selon l'algorithme minimax avec élagage
-    def minimax(self, board, joueur, nb_Turn, depth=1):
+    def minimax(self, board, joueur, nb_Turn, depth=3):
         start_time = time.time()
         alpha = float('-inf')
         beta = float('inf')
@@ -224,7 +225,7 @@ class Game :
         #Récupère et ordonne les coups
         moves = self.order_moves(board, self.actions(board,nb_Turn,1), joueur)
         best_move = moves[0]
-        
+        print(moves)
         try:
             for move in moves:
                 #Vérifie le temps
@@ -233,7 +234,7 @@ class Game :
                     
                 new_board = self.result(board, joueur, move)
                 
-                value = self.min_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time)
+                value = self.max_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time)
                 if value > alpha:
                     alpha = value
                     best_move = move
@@ -252,7 +253,6 @@ class Game :
             
         v = float('-inf')
         moves = self.actions(board, nb_Turn)
-        
         for move in self.order_moves(board, moves, joueur):
             new_board = self.result(board, joueur, move)
             v = max(v, self.min_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time))
