@@ -3,85 +3,89 @@ from scipy.signal import convolve2d
 import time
 from scipy.ndimage import convolve
 
-class Game :
-    #Initialisation de la class
+
+class Game:
     def __init__(self):
-        #Constantes du jeu
         self.taille_plateau = 15
-        self.longueur_victoire  = 5
+        self.longueur_victoire = 5
         self.centre = (self.taille_plateau // 2, self.taille_plateau // 2)
 
-        #Modes de jeu
-        self.mode_jj  = 1
-        self.mode_jo  = 2
-        
-        #Identifiants des joueurs
+        self.mode_jj = 1
+        self.mode_jo = 2
+
         self.joueur_1 = 1
         self.joueur_2 = 2
-        
-        #Initialisation du plateau
+
         self.plateau = Plateau(self.taille_plateau)
-        
-        #Création des masques pour la détection de victoire
+
+        # Matrice pour détecter les coups adjacents
         self.matriceadj = np.array([[1, 1, 1],
-                   [1, 0,  1],
-                   [1, 1, 1]])
+                                  [1, 0, 1],
+                                  [1, 1, 1]])
+                                  
+        # Patterns avec scores et masques
+        self.patterns = {
+            'cinq': {'seq': [1,1,1,1,1], 'score': 100000},
+            'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 50000},
+            'quatre': {'seq': [1,1,1,1,0], 'score': 15000},
+            'quatre_bloque': {'seq': [1,1,1,1], 'score': 12000},
+            'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 5000},
+            'trois': {'seq': [1,1,1], 'score': 1000},
+            'deux_ouvert': {'seq': [0,1,1,0], 'score': 200},
+            'deux': {'seq': [1,1], 'score': 50}
+        }
+        
+        # Masques de détection pour la victoire
         self.masques = {
-            'win': [
+            5: [
                 np.ones((1, self.longueur_victoire)),
                 np.ones((self.longueur_victoire, 1)),
                 np.eye(self.longueur_victoire),
                 np.fliplr(np.eye(self.longueur_victoire))
-            ],
-            4: [
-                np.ones((1, 4)),
-                np.ones((4, 1)),
-                np.eye(4),
-                np.fliplr(np.eye(4))
-            ],
-            3: [
-                np.ones((1, 3)),
-                np.ones((3, 1)),
-                np.eye(3),
-                np.fliplr(np.eye(3))
-            ],
-            2: [
-                np.ones((1, 2)),
-                np.ones((2, 1)),
-                np.eye(2),
-                np.fliplr(np.eye(2))
             ]
         }
-        #Démarrage du jeu
-        self.Init_Game()
         
-    #Initialise et démarre une nouvelle partie
+        # Directions d'analyse
+        self.directions = [
+            (1, 0),   # horizontal
+            (0, 1),   # vertical
+            (1, 1),   # diagonal principal
+            (1, -1)   # diagonal inverse
+        ]
+        
+        # Table de transposition pour l'optimisation
+        self.transposition_table = {}
+        
+        # Initialisation du jeu
+        self.Init_Game()
+
+    # Initialisation du jeu
     def Init_Game(self):
         print("Bienvenue dans le jeu de Gomoku !\n")
-        
+
         while True:
             print("Veuillez sélectionner le mode de jeu :")
             print("    -Joueur VS Joueur (jj)")
             print("    -Joueur VS Ordinateur (jo)")
-            
+
             mode_input = input("Entrez jj ou jo (quit pour arrêter le jeu) : \n").lower()
-            
+
             if mode_input == "quit":
                 return
-                
+
             if mode_input == "jj":
                 self.mode = self.mode_jj
                 break
-                
+
             if mode_input == "jo":
                 self.mode = self.mode_jo
                 while True:
                     print("\nVeuillez sélectionner la priorité de jeu :")
                     print("    -Je commence (j1)")
                     print("    -Je seconde (j2)")
-                    
+
                     prio_temp = input("Entrez j1 ou j2 : \n").lower()
-                    
+
                     if prio_temp == "j1":
                         prio = self.joueur_1
                         break
@@ -90,57 +94,52 @@ class Game :
                         break
                     elif prio_temp == "quit":
                         return
-                        
+
                     print("Choix non valide. Veuillez réessayer.\n")
                 self.who_is_playing = prio
                 break
-                
+
             print("Mode de jeu non existant. Veuillez réessayer.\n")
         self.Play()
-    
-    #Gestion de la partie en cours
+
+    # Lancement du jeu
     def Play(self):
         nb_turn = 1
         joueur = 2 if self.mode == self.mode_jo and self.who_is_playing == self.joueur_2 else 1
         taille_plateau_total = self.taille_plateau * self.taille_plateau
 
-        
         while nb_turn <= taille_plateau_total:
-            #Vérification victoire avant le tour
             if self.check_winner():
                 break
-                
-            #Tour du joueur actuel
+
             self.Turn(joueur, nb_turn)
-            
-            #Update des variables
-            joueur = 3 - joueur  #Alternance 1-2
+
+            joueur = 3 - joueur  # Alternance 1-2
             nb_turn += 1
-        
+
         winner = self.check_winner()
         self.GameOver(winner)
-   
-    #Gère la fin de la partie
+
+    # Fin du jeu
     def GameOver(self, winner):
         print(self.plateau)
         if winner == 0:
             print("Match nul !")
         else:
             print(f"Le joueur {winner} a gagné !")
-   
-    #Check les conditions de victoire
+
+    # Vérification du gagnant
     def check_winner(self):
-        # Convolutions pour détecter les alignements
-        for mask in self.masques["win"]:
-            conv_result = convolve2d(self.plateau.get_plateau(), mask, mode="valid")
-            # Vérification pour le joueur 1 (réel) et joueur 2 (imaginaire)
-            if np.any(np.real(conv_result) == self.longueur_victoire):
-                return 1  # Joueur 1 gagne
-            if np.any(np.imag(conv_result) == self.longueur_victoire):
-                return 2  # Joueur 2 gagne
-        return 0 # Aucun gagnant
-    
-    #Gestion d'un tour de jeu
+        for mask in self.masques[5]:
+            conv_result = convolve2d(self.plateau.get_plateau() == 1, mask, mode="valid")
+            if np.any(conv_result == self.longueur_victoire):
+                return 1
+            conv_result = convolve2d(self.plateau.get_plateau() == 1j, mask, mode="valid")
+            if np.any(conv_result == self.longueur_victoire):
+                return 2
+        return 0
+
+    # Tour de jeu
     def Turn(self, joueur, nb_Turn):
         action_messages = {
             (self.mode_jj, 1): "C'est au Joueur 1 de jouer",
@@ -148,19 +147,19 @@ class Game :
             (self.mode_jo, 1): "C'est à vous de jouer",
             (self.mode_jo, 2): "C'est à l'IA de jouer"
         }
-        
+
         print(f"Tour : {nb_Turn-1}")
         print(self.plateau)
         print(action_messages[(self.mode, joueur)])
-        
+
         if joueur == 2 and self.mode == self.mode_jo:
             position = self.minimax(self.plateau.get_plateau(), joueur, nb_Turn)
         else:
             position = self.get_player_move(nb_Turn)
-            
+
         self.plateau.set_position(position, joueur)
-    
-    # Récupère et valide le coup du joueur
+
+    # Récupération du coup du joueur
     def get_player_move(self, nb_Turn):
         actions_possibles = self.actions(self.plateau.get_plateau(), nb_Turn)
         if nb_Turn == 1:
@@ -168,184 +167,258 @@ class Game :
             return self.centre
         elif nb_Turn == 3:
             print("Vous pouvez jouer dans les cases situées en dehors du carré central 7x7, \nc'est-à-dire sur les lignes et colonnes avant la ligne E ou après la ligne J, \nainsi que sur les colonnes avant la colonne 5 ou après la colonne 10.")
-        
+
         while True:
             try:
                 ligne_input = input("Entrer la ligne (A à O) : ").upper()
-                if len(ligne_input)!=1 or ligne_input < 'A' or ligne_input > 'O':
+                if len(ligne_input) != 1 or ligne_input < 'A' or ligne_input > 'O':
                     raise ValueError("Ligne invalide. Veuillez entrer une lettre entre A et O.")
-                
+
                 colonne_input = input("Entrer la colonne (1 à 15) : ")
                 colonne = int(colonne_input) - 1
-                
+
                 ligne = ord(ligne_input) - ord('A')
-                
+
                 if (ligne, colonne) not in actions_possibles:
                     raise ValueError("Position invalide ou déjà occupée. Réessayez.")
-                    
+
                 return (ligne, colonne)
-                
+
             except (ValueError, IndexError):
                 print("Position invalide ou déjà occupée. Réessayez.")
     
-    # Fonction qui retourne un board modifié à la case position par 1 ou 1j SANS MODIF self.plateau !!!!
-    def result(self,board, joueur, position):
+    # Résultat du coup
+    def result(self, board, joueur, position):
         new_board = board.copy()
         val = 1j if joueur == 2 else joueur
         new_board[position[0], position[1]] = val
         return new_board
 
-
-    
-    # Fonction qui retourne les actions possibles changer -3 par 3 quand on joue en 15*15
-    def actions(self,board,nb_Turn,bot=0):
-        if nb_Turn==1:
-            actions_possibles=[self.centre]
-        elif nb_Turn==3 and self.taille_plateau==15:
-            if board[2,8]==0:
-                return [(2,7)]
+    # Actions possibles
+    def actions(self, board, nb_Turn, bot=0):
+        if nb_Turn == 1:
+            actions_possibles = [self.centre]
+        elif nb_Turn == 3:
+            if board[2, 8] == 0:
+                return [(2, 7)]
             else:
-                return [(11,7)]
+                return [(11, 7)]
         else:
             if bot == 1:
                 boardcandidats = convolve((board != 0).astype(int), self.matriceadj, mode="constant", cval=0)
-                actions_possibles= [(i, j) for i in range(boardcandidats.shape[0]) for j in range(boardcandidats.shape[1]) if boardcandidats[i,j]!=0 and board[i,j]==0]
+                actions_possibles = [(i, j) for i in range(boardcandidats.shape[0]) for j in range(boardcandidats.shape[1]) if boardcandidats[i, j] != 0 and board[i, j] == 0]
             else:
-                actions_possibles= [(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i,j]==0]
-            
-        return  actions_possibles
+                actions_possibles = [(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if board[i, j] == 0]
+        return actions_possibles
     
-      
-    #Retourne le meilleur coup selon l'algorithme minimax avec élagage
+    # Vérification des patterns
+    def check_pattern(self, board, pattern, player_val):
+        pattern = np.array(pattern)
+        count = 0
+        for dx, dy in self.directions:
+            for i in range(self.taille_plateau):
+                for j in range(self.taille_plateau):
+                    matches = True
+                    for k in range(len(pattern)):
+                        ni = i + k*dx
+                        nj = j + k*dy
+                        if not (0 <= ni < self.taille_plateau and 
+                               0 <= nj < self.taille_plateau):
+                            matches = False
+                            break
+                        if ((pattern[k] == 1 and board[ni,nj] != player_val) or 
+                            (pattern[k] == 0 and board[ni,nj] != 0)):
+                            matches = False
+                            break
+                    if matches:
+                        count += 1
+        return count
+
+    # Évaluation du plateau
+    def evaluate_board(self, board, joueur):
+        val_joueur = 1j if joueur == 2 else 1
+        val_adversaire = 1 if joueur == 2 else 1j
+        score = 0
+
+        # Vérification des patterns pour les deux joueurs
+        for pattern_info in self.patterns.values():
+            # Score pour nos patterns
+            count_own = self.check_pattern(board, pattern_info['seq'], val_joueur)
+            score += count_own * pattern_info['score']
+            
+            # Score pour l'adversaire (défense plus importante)
+            count_opp = self.check_pattern(board, pattern_info['seq'], val_adversaire)
+            score -= count_opp * pattern_info['score'] * 1.5
+
+        # Bonus pour le contrôle du centre
+        centre_x, centre_y = self.taille_plateau // 2, self.taille_plateau // 2
+        for i in range(self.taille_plateau):
+            for j in range(self.taille_plateau):
+                if board[i,j] == val_joueur:
+                    distance_centre = abs(i - centre_x) + abs(j - centre_y)
+                    score += max(0, (self.taille_plateau - distance_centre)) * 10
+
+        return score
+
+    # Sélection des meilleurs coups
+    def get_best_moves(self, board, joueur, nb_Turn, top_n=5):
+            moves = self.actions(board, nb_Turn, 1)
+            move_scores = []
+            
+            for move in moves:
+                # Simulation du coup
+                new_board = self.result(board, joueur, move)
+                
+                # Vérification immédiate de la victoire
+                if self.is_winning_move(new_board, move, joueur):
+                    return [move]
+                
+                # Vérification du blocage d'une victoire adverse
+                if self.blocks_win(board, move, 3-joueur):
+                    return [move]
+                
+                # Évaluation normale
+                score = self.evaluate_board(new_board, joueur)
+                move_scores.append((move, score))
+
+            # Tri et randomisation légère pour la variété
+            best_moves = sorted(move_scores, key=lambda x: x[1], reverse=True)[:top_n]
+            return [move for move, _ in best_moves]
+
+    # Vérification d'un coup gagnant
+    def is_winning_move(self, board, move, joueur):
+        val = 1j if joueur == 2 else 1
+        for dx, dy in self.directions:
+            count = 1
+            
+            for step in [-1, 1]:
+                i, j = move[0], move[1]
+                while True:
+                    i += dx * step
+                    j += dy * step
+                    if not (0 <= i < self.taille_plateau and 
+                           0 <= j < self.taille_plateau):
+                        break
+                    if board[i,j] != val:
+                        break
+                    count += 1
+                    if count >= 5:
+                        return True
+        return False
+
+    # Vérification du blocage d'une victoire adverse
+    def blocks_win(self, board, move, opponent):
+        test_board = self.result(board, opponent, move)
+        return self.is_winning_move(test_board, move, opponent)
+
+    # Algorithme minimax avec élagage alpha-beta
     def minimax(self, board, joueur, nb_Turn, depth=3):
         start_time = time.time()
         alpha = float('-inf')
         beta = float('inf')
-        
-        #Récupère et ordonne les coups
-        moves = self.order_moves(board, self.actions(board,nb_Turn,1), joueur)
+
+        moves = self.get_best_moves(board, joueur, nb_Turn)
         best_move = moves[0]
-        print(moves)
+        board_hash = str(board)
+
         try:
+            if board_hash in self.transposition_table:
+                stored_depth, stored_move = self.transposition_table[board_hash]
+                if stored_depth >= depth:
+                    return stored_move
+
             for move in moves:
-                #Vérifie le temps
-                '''if time.time() - start_time > 4.5:
-                    return best_move'''
-                    
+                if time.time() - start_time > 4.5:
+                    break
+
                 new_board = self.result(board, joueur, move)
-                
-                value = self.max_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time)
+                value = self.min_value(new_board, 3 - joueur, nb_Turn + 1, depth - 1, alpha, beta, start_time)
+
                 if value > alpha:
                     alpha = value
                     best_move = move
-                    
+                    self.transposition_table[board_hash] = (depth, move)
+
         except TimeoutError:
             return best_move
-            
+
         return best_move
-    
+
+    # Fonction de maximisation pour Minimax
     def max_value(self, board, joueur, nb_Turn, depth, alpha, beta, start_time):
-        '''if time.time() - start_time > 4.5:
-            return self.evaluate_board(board, joueur)'''
-            
-        if depth == 0 or self.check_winner():
+        if time.time() - start_time > 4.5:
             return self.evaluate_board(board, joueur)
-            
+
+        if depth == 0 or self.check_winner() != 0:
+            return self.evaluate_board(board, joueur)
+
         v = float('-inf')
-        moves = self.actions(board, nb_Turn)
-        for move in self.order_moves(board, moves, joueur):
+        moves = self.get_best_moves(board, joueur, nb_Turn)
+
+        for move in moves:
             new_board = self.result(board, joueur, move)
-            v = max(v, self.min_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time))
+            v = max(v, self.min_value(new_board, 3 - joueur, nb_Turn + 1, depth - 1, alpha, beta, start_time))
             if v >= beta:
                 return v
             alpha = max(alpha, v)
         return v
 
+    # Fonction de minimisation pour Minimax
     def min_value(self, board, joueur, nb_Turn, depth, alpha, beta, start_time):
-        '''if time.time() - start_time > 4.5:
-            return self.evaluate_board(board, joueur)'''
-            
-        if depth == 0 or self.check_winner():
+        if time.time() - start_time > 4.5:
             return self.evaluate_board(board, joueur)
-            
+
+        if depth == 0 or self.check_winner() != 0:
+            return self.evaluate_board(board, joueur)
+
         v = float('inf')
-        moves = self.actions(board, nb_Turn)
-        
-        for move in self.order_moves(board, moves, joueur):
+        moves = self.get_best_moves(board, joueur, nb_Turn)
+
+        for move in moves:
             new_board = self.result(board, joueur, move)
-            v = min(v, self.max_value(new_board, 3-joueur, nb_Turn, depth-1, alpha, beta, start_time))
+            v = min(v, self.max_value(new_board, 3 - joueur, nb_Turn + 1, depth - 1, alpha, beta, start_time))
             if v <= alpha:
                 return v
             beta = min(beta, v)
         return v
 
-    #Ordonne les coups selon leur score
-    def order_moves(self, board, moves, joueur):
-        move_scores = []
-        for move in moves:
-            new_board = self.result(board, joueur, move)
-            score = self.evaluate_board(new_board, joueur)
-            move_scores.append((move, score))
-        return [m for m, s in sorted(move_scores, key=lambda x: x[1], reverse=True)]
-    
-    #Évalue le plateau pour un joueur donné
-    def evaluate_board(self, board, joueur):
-        score = 0
-        rep = 0
-        opp = 0
-        listeplus = [1,2,100]
-        listemoins= [10,20,200]
-        for i in range(2,5):
-
-            for mask in self.masques[i]:
-                rep+=np.sum(np.imag(convolve2d(board,mask,mode="valid"))==i)*listeplus[i-3]
-                opp+=np.sum(np.real(convolve2d(board,mask,mode="valid"))==i)*listemoins[i-3]
-        return rep-opp
-
-
-
 class Plateau:
-
-    def __init__(self, taille=15):                
+    def __init__(self, taille=15):
         self.plateau = np.zeros((taille, taille), dtype=complex)
 
+    # Récupération du plateau
     def get_plateau(self):
         return self.plateau
-    
-    def set_position(self,pos,val):
-        if (val == 2) : 
-            val = 1j
-        self.plateau[pos[0],pos[1]] = val  
 
-    def __str__(self):  # Affiche dans la console le plateau
+    # Positionnement sur le plateau
+    def set_position(self, pos, val):
+        if val == 2:
+            val = 1j
+        self.plateau[pos[0], pos[1]] = val
+
+    # Affichage du plateau
+    def __str__(self):
         cellule = {0: " ", 1: "X", 1j: "O"}
-        rep = "    "  # Espacement initial pour aligner les chiffres avec les colonnes
-        
-        # Ajout des indices des colonnes, alignés avec les cases
+        rep = "    "
         for i in range(len(self.plateau[0])):
-            rep += f" {i+1:<3}"  # Chaque indice occupe 3 caractères pour s'aligner
+            rep += f" {i + 1:<3}"
         
-        rep += "\n"  # Retour à la ligne pour le début du plateau
-        # Construction du tableau
+        rep += "\n"
         i = 0
-        string="ABCDEFGHIJKLMNO"
+        string = "ABCDEFGHIJKLMNO"
         for ligne in self.plateau:
-            # Ligne de séparation entre les cases
             rep += "    +" + "---+" * len(ligne) + "\n"
-            # Contenu de la ligne
-            rep += f"{string[i]}   "  # Ajout de l'indice de la ligne
+            rep += f"{string[i]}   "
             for cell in ligne:
-                rep += f"| {cellule[cell]} "  # Ajout du contenu de chaque case
+                rep += f"| {cellule[cell]} "
             rep += "|\n"
             i += 1
-    
-        # Dernière ligne de séparation
+
         rep += "    +" + "---+" * len(self.plateau[0]) + "\n"
-        return rep 
+        return rep
 
 def main():
     game = Game()
 
 if __name__ == "__main__":
     main()
-
