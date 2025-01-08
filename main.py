@@ -6,6 +6,7 @@ from scipy.ndimage import convolve
 
 class Game:
     def __init__(self):
+        self.ligne=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O']
         self.taille_plateau = 15
         self.longueur_victoire = 5
         self.centre = (self.taille_plateau // 2, self.taille_plateau // 2)
@@ -200,10 +201,8 @@ class Game:
         if nb_Turn == 1:
             actions_possibles = [self.centre]
         elif nb_Turn == 3:
-            if board[2, 8] == 0:
-                return [(2, 7)]
-            else:
-                return [(11, 7)]
+            actions_possibles = [(i, j) for i in range(4,11) for j in range(4,11) if board[i, j] == 0]
+            return [(i, j) for i in range(self.taille_plateau) for j in range(self.taille_plateau) if (i,j) not in actions_possibles and board[i, j] == 0]
         else:
             if bot == 1:
                 boardcandidats = convolve((board != 0).astype(int), self.matriceadj, mode="constant", cval=0)
