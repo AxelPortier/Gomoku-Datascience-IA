@@ -158,6 +158,7 @@ class Game:
             position = self.get_player_move(nb_Turn)
 
         self.plateau.set_position(position, joueur)
+        print("position jouée : ", (self.ligne[position[0]],position[1]+1))
 
     # Récupération du coup du joueur
     def get_player_move(self, nb_Turn):
