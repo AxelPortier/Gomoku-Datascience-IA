@@ -26,26 +26,37 @@ class Game:
                                   
         # Patterns avec scores et masques
         self.patterns = {
-                        'cinq': {'seq': [1,1,1,1,1], 'score': 1000000000000000000},
-                        'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 10000000},  # Priorité élevée
-                        'quatre': {'seq': [1,1,1,1,0], 'score': 5000000},  # Défense élevée
-                        'quatre_v2': {'seq': [0,1,1,1,1], 'score': 5000000},  # Défense élevée
-                        'quatre_bloque': {'seq': [1,1,1,1], 'score': 120000},
-                        'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 1000000},  # Priorité attaque
-                        'trois': {'seq': [1,1,1], 'score': 100000},  # Défense
-                        'deux_ouvert': {'seq': [0,1,1,0], 'score': 500},  # Construction
-                        'deux': {'seq': [1,1], 'score': 100},
-                        'quatre_milieu': {'seq': [1,0,1,1], 'score': 10000000000000}  # Bloquer les menaces
+    'cinq': {'seq': [1,1,1,1,1], 'score': 1000},
+    'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 101},  # Augmentation du score
+    'quatre_ouvertdroit': {'seq': [1,1,1,1,0], 'score': 40},  # Augmentation du score
+    'quatre_ouvertgauche': {'seq': [0,1,1,1,1], 'score': 40},  # Augmentation du score
+    'quatre_milieugauche': {'seq': [0,1,0,1,1,0], 'score': 45},  # Augmentation du score
+    'quatre_milieudroite': {'seq': [0,1,1,0,1,0], 'score': 45},  # Augmentation du score
+    'quatre_milieuv2': {'seq': [1,0,1,1], 'score': 42},  # Augmentation du score
+    'quatre_milieuv3': {'seq': [1,1,0,1], 'score': 42},  # Augmentation du score
+    'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 35},  # Augmentation du score
+    'trois_ouvertgauche': {'seq': [1,1,1,0], 'score': 20},  # Augmentation du score
+    'trois_ouvertdroit': {'seq': [0,1,1,1], 'score': 20},  # Augmentation du score
+    'deux_ouvert': {'seq': [0,1,1,0], 'score': 18},  # Augmentation du score
+    'deux_ouvertgauche': {'seq': [1,1,0], 'score': 15},  # Augmentation du score
+    'deux_ouvertdroit': {'seq': [0,1,1], 'score': 15},  # Augmentation du score
+    'un_ouvert': {'seq': [0,1,0], 'score': 5}  # Nouveau pattern
         }
 
         
         # Masques de détection pour la victoire
         self.masques = {
             5: [
-                np.ones((1, self.longueur_victoire)),
-                np.ones((self.longueur_victoire, 1)),
-                np.eye(self.longueur_victoire),
-                np.fliplr(np.eye(self.longueur_victoire))
+                        np.ones((1, self.longueur_victoire)),  # Horizontal
+                        np.ones((self.longueur_victoire, 1)),  # Vertical
+                        np.eye(self.longueur_victoire),  # Diagonale principale
+                        np.fliplr(np.eye(self.longueur_victoire)),  # Anti-diagonale
+                        np.rot90(np.eye(self.longueur_victoire)),  # Diagonale principale (rotation 90°)
+                        np.rot90(np.fliplr(np.eye(self.longueur_victoire))),  # Anti-diagonale (rotation 90°)
+                        np.rot90(np.eye(self.longueur_victoire), 2),  # Diagonale principale (rotation 180°)
+                        np.rot90(np.fliplr(np.eye(self.longueur_victoire)), 2),  # Anti-diagonale (rotation 180°)
+                        np.rot90(np.eye(self.longueur_victoire), 3),  # Diagonale principale (rotation 270°)
+                        np.rot90(np.fliplr(np.eye(self.longueur_victoire)), 3)  # Anti-diagonale (rotation 270°)
             ]
         }
         
