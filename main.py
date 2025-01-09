@@ -266,7 +266,7 @@ class Game:
         return score
 
     # Sélection des meilleurs coups
-    def get_best_moves(self, board, joueur, nb_Turn, top_n=5):
+    def get_best_moves(self, board, joueur, nb_Turn, top_n=7):
             moves = self.actions(board, nb_Turn, 1)
             move_scores = []
             
@@ -317,7 +317,7 @@ class Game:
         return self.is_winning_move(test_board, move, opponent)
 
     # Algorithme minimax avec élagage alpha-beta
-    def minimax(self, board, joueur, nb_Turn, depth=5):
+    def minimax(self, board, joueur, nb_Turn, depth=4):
         start_time = time.time()
         alpha = float('-inf')
         beta = float('inf')
@@ -346,7 +346,7 @@ class Game:
 
         except TimeoutError:
             return best_move
-
+        print(time.time() - start_time)
         return best_move
 
     # Fonction de maximisation pour Minimax
