@@ -26,10 +26,10 @@ class Game:
                                   
         # Patterns avec scores et masques
         self.patterns = {
-                        'cinq': {'seq': [1,1,1,1,1], 'score': 100000},
+                        'cinq': {'seq': [1,1,1,1,1], 'score': 1000000000000000000},
                         'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 10000000},  # Priorité élevée
                         'quatre': {'seq': [1,1,1,1,0], 'score': 5000000},  # Défense élevée
-                        'quatre_bloque': {'seq': [1,1,1,1], 'score': 1200},
+                        'quatre_bloque': {'seq': [1,1,1,1], 'score': 120000},
                         'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 1000000},  # Priorité attaque
                         'trois': {'seq': [1,1,1], 'score': 100000},  # Défense
                         'deux_ouvert': {'seq': [0,1,1,0], 'score': 500},  # Construction
@@ -161,7 +161,7 @@ class Game:
             position = self.get_player_move(nb_Turn)
 
         self.plateau.set_position(position, joueur)
-        print("position jouée : ", (self.ligne[position[0]],position[1]+1))
+        print("position jouée : ", (self.ligne[position[0]],position[1]))
 
     # Récupération du coup du joueur
     def get_player_move(self, nb_Turn):
@@ -178,8 +178,8 @@ class Game:
                 if len(ligne_input) != 1 or ligne_input < 'A' or ligne_input > 'O':
                     raise ValueError("Ligne invalide. Veuillez entrer une lettre entre A et O.")
 
-                colonne_input = input("Entrer la colonne (1 à 15) : ")
-                colonne = int(colonne_input) - 1
+                colonne_input = input("Entrer la colonne (0 à 14) : ")
+                colonne = int(colonne_input) 
 
                 ligne = ord(ligne_input) - ord('A')
 
@@ -403,7 +403,7 @@ class Plateau:
         cellule = {0: " ", 1: "X", 1j: "O"}
         rep = "    "
         for i in range(len(self.plateau[0])):
-            rep += f" {i + 1:<3}"
+            rep += f" {i :<3}"
         
         rep += "\n"
         i = 0
