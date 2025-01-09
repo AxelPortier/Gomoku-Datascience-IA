@@ -26,15 +26,18 @@ class Game:
                                   
         # Patterns avec scores et masques
         self.patterns = {
-                        'cinq': {'seq': [1,1,1,1,1], 'score': 1000000000000000000},
-                        'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 10000000},  # Priorité élevée
-                        'quatre': {'seq': [1,1,1,1,0], 'score': 5000000},  # Défense élevée
-                        'quatre_bloque': {'seq': [1,1,1,1], 'score': 120000},
-                        'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 1000000},  # Priorité attaque
-                        'trois': {'seq': [1,1,1], 'score': 100000},  # Défense
-                        'deux_ouvert': {'seq': [0,1,1,0], 'score': 500},  # Construction
-                        'deux': {'seq': [1,1], 'score': 100},
-                        'quatre_milieu': {'seq': [1,0,1,1], 'score': 10000000000000}  # Bloquer les menaces
+                        'cinq': {'seq': [1,1,1,1,1], 'score': 100},
+                        'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 20},  # Priorité élevée
+                        'quatre_ouvertdroit': {'seq': [1,1,1,1,0], 'score': 15},  # Défense élevée
+                        'quatre_ouvertgauche': {'seq': [0,1,1,1,1], 'score': 15},
+                        'quatre_milieugauche': {'seq': [1,0,1,1], 'score': 17},  # Bloquer les menaces
+                        'quatre_milieudroite': {'seq': [1,1,0,1], 'score': 17},
+                        'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 20},  # Priorité attaque
+                        'trois_ouvertgauche': {'seq': [1,1,1,0], 'score': 7},  # Défense
+                        'trois_ouvertdroit': {'seq': [0,1,1,1], 'score': 7},  # Défense
+                        'deux_ouvert': {'seq': [0,1,1,0], 'score': 5},  # Construction
+                        'deux_ouvertgauche': {'seq': [1,1,0], 'score': 2},
+                        'deux_ouvertdroit': {'seq': [0,1,1], 'score': 2}
         }
 
         
