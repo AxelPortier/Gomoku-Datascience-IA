@@ -26,7 +26,7 @@ class Game:
                                   
         # Patterns avec scores et masques
         self.patterns = {
-    'cinq': {'seq': [1,1,1,1,1], 'score': 1000},
+        'cinq': {'seq': [1,1,1,1,1], 'score': 1000},
     'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 101},  # Augmentation du score
     'quatre_ouvertdroit': {'seq': [1,1,1,1,0], 'score': 40},  # Augmentation du score
     'quatre_ouvertgauche': {'seq': [0,1,1,1,1], 'score': 40},  # Augmentation du score
@@ -42,21 +42,14 @@ class Game:
     'deux_ouvertdroit': {'seq': [0,1,1], 'score': 15},  # Augmentation du score
     'un_ouvert': {'seq': [0,1,0], 'score': 5}  # Nouveau pattern
         }
-
-        
+       
         # Masques de détection pour la victoire
         self.masques = {
             5: [
-                        np.ones((1, self.longueur_victoire)),  # Horizontal
-                        np.ones((self.longueur_victoire, 1)),  # Vertical
-                        np.eye(self.longueur_victoire),  # Diagonale principale
-                        np.fliplr(np.eye(self.longueur_victoire)),  # Anti-diagonale
-                        np.rot90(np.eye(self.longueur_victoire)),  # Diagonale principale (rotation 90°)
-                        np.rot90(np.fliplr(np.eye(self.longueur_victoire))),  # Anti-diagonale (rotation 90°)
-                        np.rot90(np.eye(self.longueur_victoire), 2),  # Diagonale principale (rotation 180°)
-                        np.rot90(np.fliplr(np.eye(self.longueur_victoire)), 2),  # Anti-diagonale (rotation 180°)
-                        np.rot90(np.eye(self.longueur_victoire), 3),  # Diagonale principale (rotation 270°)
-                        np.rot90(np.fliplr(np.eye(self.longueur_victoire)), 3)  # Anti-diagonale (rotation 270°)
+                np.ones((1, self.longueur_victoire)),
+                np.ones((self.longueur_victoire, 1)),
+                np.eye(self.longueur_victoire),
+                np.fliplr(np.eye(self.longueur_victoire))
             ]
         }
         
@@ -168,7 +161,14 @@ class Game:
         print(action_messages[(self.mode, joueur)])
 
         if joueur == 2 and self.mode == self.mode_jo:
-            position = self.minimax(self.plateau.get_plateau(), joueur, nb_Turn)
+            if nb_Turn==1:
+                position = self.centre
+            elif nb_Turn==3 and self.plateau.get_plateau()[3,7]==0:
+                position = (3,7)
+            elif nb_Turn==3 and self.plateau.get_plateau()[11,7]==0:
+                position = (11,7)
+            else:
+                position = self.minimax(self.plateau.get_plateau(), joueur, nb_Turn)
         else:
             position = self.get_player_move(nb_Turn)
 
@@ -275,7 +275,7 @@ class Game:
         return score
 
     # Sélection des meilleurs coups
-    def get_best_moves(self, board, joueur, nb_Turn, top_n=7):
+    def get_best_moves(self, board, joueur, nb_Turn, top_n=2):
             moves = self.actions(board, nb_Turn, 1)
             move_scores = []
             
@@ -326,7 +326,7 @@ class Game:
         return self.is_winning_move(test_board, move, opponent)
 
     # Algorithme minimax avec élagage alpha-beta
-    def minimax(self, board, joueur, nb_Turn, depth=4):
+    def minimax(self, board, joueur, nb_Turn, depth=3):
         start_time = time.time()
         alpha = float('-inf')
         beta = float('inf')
@@ -370,10 +370,13 @@ class Game:
         moves = self.get_best_moves(board, joueur, nb_Turn)
 
         for move in moves:
-            new_board = self.result(board, joueur, move)
-            v = max(v, self.min_value(new_board, 3 - joueur, nb_Turn + 1, depth - 1, alpha, beta, start_time))
-            if v >= beta:
+            if time.time() - start_time > 4.5:
                 return v
+            else:
+                new_board = self.result(board, joueur, move)
+                v = max(v, self.min_value(new_board, 3 - joueur, nb_Turn + 1, depth - 1, alpha, beta, start_time))
+                if v >= beta:
+                    return v
             alpha = max(alpha, v)
         return v
 
@@ -389,10 +392,13 @@ class Game:
         moves = self.get_best_moves(board, joueur, nb_Turn)
 
         for move in moves:
-            new_board = self.result(board, joueur, move)
-            v = min(v, self.max_value(new_board, 3 - joueur, nb_Turn + 1, depth - 1, alpha, beta, start_time))
-            if v <= alpha:
+            if time.time() - start_time > 4.5:
                 return v
+            else:
+                new_board = self.result(board, joueur, move)
+                v = min(v, self.max_value(new_board, 3 - joueur, nb_Turn + 1, depth - 1, alpha, beta, start_time))
+                if v <= alpha:
+                    return v
             beta = min(beta, v)
         return v
 
