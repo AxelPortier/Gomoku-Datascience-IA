@@ -35,10 +35,8 @@ class Game:
                         'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 1000},
                         'trois_gauche': {'seq': [0,1,1,1], 'score': 100},  
                         'trois_droite': {'seq': [1,1,1,0], 'score': 100},
-                        'trois_semi': {'seq': [1,0,1], 'score': 50},
-                        'deux_ouvert': {'seq': [0,1,1,0], 'score': 10}, 
-                        'deux_gauche': {'seq': [0,1,1], 'score': 1}, 
-                        'deux_droite': {'seq': [1,1,0], 'score': 1}, 
+                        'deux_ouvert': {'seq': [0,1,1,0], 'score': 10} 
+
         }
        
         # Masques de détection pour la victoire
