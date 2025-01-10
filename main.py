@@ -27,12 +27,17 @@ class Game:
         # Patterns avec scores et masques
         self.patterns = {
                         'cinq': {'seq': [1,1,1,1,1], 'score': 1000000000000000000},
-                        'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 10000000},  # Priorité élevée
-                        'quatre': {'seq': [1,1,1,1,0], 'score': 5000000},  # Défense élevée
-                        'quatre_bloque': {'seq': [1,1,1,1], 'score': 120000},
-                        'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 1000000},  # Priorité attaque
-                        'trois': {'seq': [1,1,1], 'score': 100000},  # Défense
-                        'deux_ouvert': {'seq': [0,1,1,0], 'score': 500},  # Construction
+                        'quatre_ouvert': {'seq': [0,1,1,1,1,0], 'score': 10000000},
+                        'quatre_semi':{'seq': [1,0,1,1], 'score': 1000000},  
+                        'quatre_semi2': {'seq': [1,1,0,1], 'score': 1000000},  
+                        'quatre_droite': {'seq': [1,1,1,1,0], 'score': 5000}, 
+                        'quatre_gauche': {'seq': [0,1,1,1,1], 'score': 5000},
+                        'trois_ouvert': {'seq': [0,1,1,1,0], 'score': 1000},
+                        'trois_gauche': {'seq': [0,1,1,1], 'score': 100},  
+                        'trois_droite': {'seq': [1,1,1,0], 'score': 100}, 
+                        'deux_ouvert': {'seq': [0,1,1,0], 'score': 10}, 
+                        'deux_gauche': {'seq': [0,1,1], 'score': 1}, 
+                        'deux_droite': {'seq': [1,1,0], 'score': 1}, 
         }
        
         # Masques de détection pour la victoire
